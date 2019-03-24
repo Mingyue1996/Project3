@@ -10,6 +10,8 @@
 
 package oop.controller;
 
+import javafx.scene.layout.Pane;
+
 public interface TTTControllerInterface {
 	
 	/**
@@ -62,5 +64,5 @@ public interface TTTControllerInterface {
 	 * 
 	 * @return
 	 */
-	String getGameDisplay();
+	Pane getGameDisplay();
 }

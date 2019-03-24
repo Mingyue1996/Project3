@@ -7,6 +7,8 @@ import oop.player.Player;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javafx.scene.layout.Pane;
 public class TTTControllerImpl implements TTTControllerInterface {
 	
 	private int numberPlayer = 0;
@@ -20,7 +22,7 @@ public class TTTControllerImpl implements TTTControllerInterface {
 	private boolean isReplay = false;
 	private boolean isHumanPlayer = true;
 	private boolean isLastMoveValid = true;
-	private ArrayList<Player> player = new ArrayList<>();
+	public ArrayList<Player> player = new ArrayList<>();
 	/**
 	 * Initialize or reset game board. Set each entry back to a default value.
 	 * 
@@ -128,7 +130,7 @@ public class TTTControllerImpl implements TTTControllerInterface {
 	 */
 	
 	public int determineWinner() {		
-		
+		marker = player.get(playerID-1).getMarker();
 		// check if there is a winner
 		if (basicGameBoard.hasWon(newMoveRow, newMoveCol, marker)) {
 			if (playerID == 1) {
@@ -153,7 +155,7 @@ public class TTTControllerImpl implements TTTControllerInterface {
 		return 3;
 	}
 	
-	public String getGameDisplay() {
+	public Pane getGameDisplay() {
 		return basicGameBoard.display();
 	}
 	

@@ -1,11 +1,16 @@
 package oop.view;
 
+import java.util.ArrayList;
+
+import oop.controller.*;
+
 import javafx.animation.RotateTransition;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -25,10 +30,21 @@ import javafx.util.Duration;
 public class MainView {
 	private BorderPane root;
 	private Scene scene; 
+	private StackPane pane = new StackPane();
+	
+	public static TTTControllerImpl ticTacToe = new TTTControllerImpl();
+	
+	private int numPlayer;
+	private int timeout = 0;
+	public static Label turnLabel = new Label();
+	
+	ArrayList<String> username = new ArrayList<>();
+	ArrayList<String> marker = new ArrayList<>();
+	
    // private TwoDArray twoDArr;
 	private Text statusNode;
-    private final int windowWidth = 800;
-    private final int windowHeight = 600;
+    private final int windowWidth = 900;
+    private final int windowHeight = 900;
 	
 	public MainView() {
 		this.root = new BorderPane();
@@ -45,36 +61,224 @@ public class MainView {
 		this.root.setTop(new CustomPane("Welcome to Tic Tac Toe!"));
 		
 		// add radio buttons
-		this.root.setCenter(getVBox());
+		this.root.setCenter(getNumPlayers());
+		System.out.println(numPlayer);
 		
-	}
+	} //end of MainView
 	
 	
-	public StackPane getVBox() {
-		StackPane pane = new StackPane();
+	public StackPane getNumPlayers() {
+		this.pane = new StackPane();
 		
-		VBox vBoxForRadioButtons = new VBox(30);
-		
+		VBox vBoxForButtons = new VBox(30);
 		
 		
 		// create new buttons
-		RadioButton onePlayer = new RadioButton("Play against computer.");
-		RadioButton twoPlayers = new RadioButton("Play with another human.");
+		RadioButton onePlayer = new RadioButton("Play against computer");
+		RadioButton twoPlayers = new RadioButton("Play with another human");
 		
-		// add buttons to the pane
-		vBoxForRadioButtons.getChildren().addAll(onePlayer, twoPlayers);
-		vBoxForRadioButtons.setAlignment(Pos.CENTER);
-		pane.getChildren().add(vBoxForRadioButtons);
-		
-		
-		
+			
 		// group the buttons together
 		ToggleGroup radioButtonsGroup = new ToggleGroup();
 		onePlayer.setToggleGroup(radioButtonsGroup);
 		twoPlayers.setToggleGroup(radioButtonsGroup);
 		
+		// set a default selection
+		onePlayer.setSelected(true);
+		
+		// create two buttons: continue and quit
+		Button continueButton = new Button("Continue");
+		Button quitButton = new Button("Quit the game");
+		
+		
+		// add buttons to the pane
+		vBoxForButtons.getChildren().addAll(onePlayer, twoPlayers, continueButton, quitButton);		
+		vBoxForButtons.setAlignment(Pos.CENTER);
+		
+		pane.getChildren().addAll(vBoxForButtons);
+		
+		//quit the game if "quit" is cliked
+		quitButton.setOnAction((e -> System.exit(0)));
+		
+		//get the number of players
+		continueButton.setOnAction(e -> {
+			if (onePlayer.isSelected()) {
+				numPlayer = 1;
+			}
+			else if (twoPlayers.isSelected()) {
+				numPlayer = 2;
+			}
+			
+			// remove "ask number of players" 
+			vBoxForButtons.getChildren().clear();
+			
+			// call another function to get timeout, user names, and markers
+			getPlayerInfo(vBoxForButtons);
+		});
+		
+		
+		
 		return pane;
 	}
+	
+	
+	// get timeout, user names, and markers
+	public void getPlayerInfo(VBox vBoxForButtons) {
+		
+		// create two buttons: continue and quit
+		Button startButton = new Button("Start the Game");
+		Button quitButton = new Button("Quit the game");
+		
+		// add buttons to the pane
+		vBoxForButtons.getChildren().addAll(startButton, quitButton);		
+		vBoxForButtons.setAlignment(Pos.CENTER);
+		
+		GridPane gridPaneForInfo = new GridPane();
+		gridPaneForInfo.setAlignment(Pos.CENTER);
+		
+		Label timeoutLabel = new Label("Time limit: ");
+		gridPaneForInfo.add(timeoutLabel, 0, 0);
+		
+		// add a textField for timeoutLabel
+		TextField fieldTimeOut = new TextField();
+		fieldTimeOut.setPrefColumnCount(6);
+		
+		gridPaneForInfo.add(fieldTimeOut, 1, 0);
+		vBoxForButtons.getChildren().add(0, gridPaneForInfo);
+		
+		TextField fieldUsername1;
+		TextField fieldUsername2 = new TextField();
+		TextField fieldMarker1;
+		TextField fieldMarker2 = new TextField();
+		
+		// when there is one player
+		if (numPlayer == 1) {
+			Label humanPlayerUsernameLabel = new Label ("Give yourself a user name: ");
+			gridPaneForInfo.add(humanPlayerUsernameLabel, 0, 1);
+			
+			Label humanPlayerMarkerLabel = new Label ("Put your marker: ");
+			gridPaneForInfo.add(humanPlayerMarkerLabel, 0, 2);
+		} 
+		// when we have two players
+		else {
+			// add player 1's user name
+			Label player1UsernameLabel = new Label("Enter palyer 1's user name");
+			gridPaneForInfo.add(player1UsernameLabel, 0, 1);
+			
+			// add player 2's user name
+			Label player1MarkerLabel = new Label("Enter palyer 1's marker");
+			gridPaneForInfo.add(player1MarkerLabel, 0, 2);
+			
+			// add player 2's user name
+			Label player2UsernameLabel = new Label("Enter palyer 2's user name");
+			gridPaneForInfo.add(player2UsernameLabel, 0, 3);
+			
+			// add player 2's user name
+			Label player2MarkerLabel = new Label("Enter palyer 2's marker");
+		    gridPaneForInfo.add(player2MarkerLabel, 0, 4);
+			
+			// add them to field
+			gridPaneForInfo.add(fieldUsername2, 1, 3);
+		}
+		
+		// add a textField for player1 user name
+		fieldUsername1 = new TextField();
+		
+		// add username1 to field
+		gridPaneForInfo.add(fieldUsername1, 1, 1);
+		
+		// add a textField for player1 marker
+		fieldMarker1 = new TextField();
+		
+		// add them to field
+		gridPaneForInfo.add(fieldMarker1, 1, 2);
+		
+		if (numPlayer == 2) {
+			// add marker2 to field
+			gridPaneForInfo.add(fieldMarker2, 1, 4); 
+		}
+		
+		
+		//quit the game if "quit" is cliked
+		quitButton.setOnAction(e -> System.exit(0));
+		
+		// get timeout, username, marker when game starts
+		startButton.setOnAction(e -> {			
+		try {
+			timeout =Integer.parseInt(fieldTimeOut.getText());		
+			
+			username.add(fieldUsername1.getText());
+			marker.add(fieldMarker1.getText());
+			
+			if (numPlayer == 2) {
+				username.add(fieldUsername2.getText());
+				marker.add(fieldMarker2.getText());
+			}
+			else {
+				username.add("Computer");
+				marker.add("X");
+			}
+			
+			// create a game
+			ticTacToe.startNewGame(numPlayer, timeout);
+			
+			// create players
+			ticTacToe.createPlayer(username.get(0), marker.get(0), 1);
+			
+			if (numPlayer == 1) {
+				ticTacToe.setIsHumanPlayer(true);
+				ticTacToe.createPlayer(username.get(1), marker.get(1), 2);
+			}else {
+				ticTacToe.setIsHumanPlayer(false);
+				ticTacToe.createPlayer(username.get(1), marker.get(1), 2);
+			}
+			
+			// clear all the elements in pane
+			pane.getChildren().clear();
+			gridPaneForInfo.getChildren().clear();
+			root.getChildren().clear();
+			
+			// play game
+			playGame();
+			
+		} catch (NumberFormatException error){
+			Text errorText = new Text ("Time out must be an integer");		
+
+			int size = gridPaneForInfo.getChildren().size();
+			if (size == 7 || size == 11) {
+				gridPaneForInfo.getChildren().remove(size-1);
+			}
+							
+			gridPaneForInfo.add(errorText, 2, 0);
+			
+		} // end of catch
+		
+			
+			
+		});
+	} // end of getPlayerInfo
+	
+	
+	// playGame
+	public void playGame() {
+		// add a  game title
+		root.setTop(new CustomPane("Welcome to Tic Tac Toe!"));
+		root.setCenter(ticTacToe.getGameDisplay());
+		
+		// show whose turn now
+		turnLabel = new Label (username.get(0) + "'s turn to play.");
+		Label timeLeft = new Label ("Time: ");
+		VBox vBoxForGame = new VBox(20);
+		vBoxForGame.getChildren().addAll(turnLabel, timeLeft);
+		vBoxForGame.setAlignment(Pos.CENTER);
+		root.setBottom(vBoxForGame);
+		root.setPadding(new Insets(50));
+		
+		
+	}
+	
+	
+	
 	
 	
 	

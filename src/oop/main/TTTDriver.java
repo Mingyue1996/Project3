@@ -26,7 +26,7 @@ public class  TTTDriver {
 	// create a tic tac toe game
 	public static void main(String[] args) throws IOException {
 			int numPlayers = 0;
-			int timeout = 0;;
+			int timeout = 0;
 			TTTControllerImpl ticTacToe = new TTTControllerImpl();
 			ArrayList<String> username = new ArrayList<>();
 			ArrayList<String> marker = new ArrayList<>();

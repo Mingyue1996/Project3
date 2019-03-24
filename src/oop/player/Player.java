@@ -29,4 +29,8 @@ public class Player {
 		newMoveRow = row;
 		newMoveCol = col;
 	}
+	
+	public String getUsername() {
+		return username;
+	}
 }
