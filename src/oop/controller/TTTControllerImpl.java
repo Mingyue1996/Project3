@@ -52,8 +52,6 @@ public class TTTControllerImpl implements TTTControllerInterface {
 				isReplay = true;
 				isHumanPlayer = true;
 				isLastMoveValid = true;
-				numberPlayer = 0;
-				timeout = 0;
 				player.clear();
 			}
 			
@@ -200,12 +198,12 @@ public class TTTControllerImpl implements TTTControllerInterface {
 	} // end of updatePlayerMove
 	
 	// change turn
-	public void setCurrentPlayer(int playerID) {
+	public int setCurrentPlayer(int playerID) {
 		if (playerID == 1)
 			this.playerID = 2;
 		else
 			this.playerID = 1;
-		
+		return this.playerID;
 	} // end of change turn
 	
 	
@@ -242,6 +240,11 @@ public class TTTControllerImpl implements TTTControllerInterface {
 	// change the value of isLastMoveValid
 	public void setIsLastMoveValid (boolean isValid) {
 		isLastMoveValid = isValid;
+	}
+	
+	// get number of players
+	public int getNumberPlayers () {
+		return numberPlayer;
 	}
 	
 	// get player's row and column

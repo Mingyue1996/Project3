@@ -1,37 +1,36 @@
 package oop.view;
 
 import java.util.ArrayList;
+import java.util.Random;
 
+import oop.board.BasicGameBoard;
+import oop.board.square.Square;
 import oop.controller.*;
 
-import javafx.animation.RotateTransition;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.effect.MotionBlur;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Line;
+
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.transform.Rotate;
-import javafx.util.Duration;
+
 //import main.course.oop.tictactoe.util.TwoDArray;
 
 public class MainView {
-	private BorderPane root;
+	public static BorderPane root;
 	private Scene scene; 
 	private StackPane pane = new StackPane();
 	
+	public static VBox vBoxForGame = new VBox(20);
 	public static TTTControllerImpl ticTacToe = new TTTControllerImpl();
 	
 	private int numPlayer;
@@ -40,31 +39,37 @@ public class MainView {
 	
 	ArrayList<String> username = new ArrayList<>();
 	ArrayList<String> marker = new ArrayList<>();
+	private static int humanPlayerID = 1;
 	
-   // private TwoDArray twoDArr;
-	private Text statusNode;
     private final int windowWidth = 900;
     private final int windowHeight = 900;
 	
 	public MainView() {
-		this.root = new BorderPane();
+		
+		MainView.root = new BorderPane();
 		this.scene = new Scene(root, windowWidth, windowHeight);
 
 		scene.getStylesheets().add(getClass().getResource("main.css").toExternalForm());
 		
-		this.statusNode = new Text("no status");
 		
 		// original professor
 		//this.root.setTop(this.buildSetupPane());
+		getMainView();
 		
-		// add a  game title
-		this.root.setTop(new CustomPane("Welcome to Tic Tac Toe!"));
-		
-		// add radio buttons
-		this.root.setCenter(getNumPlayers());
-		System.out.println(numPlayer);
 		
 	} //end of MainView
+	
+	public void getMainView() {
+		// add a  game title
+		root.setTop(new CustomPane("Welcome to Tic Tac Toe!"));		
+		// remove play again buttons and whoseTurn label
+		vBoxForGame.getChildren().clear();		
+		// add radio buttons
+		root.setCenter(getNumPlayers());
+		//clear user name and marker lists
+		username.clear();
+		marker.clear();
+	}
 	
 	
 	public StackPane getNumPlayers() {
@@ -97,7 +102,7 @@ public class MainView {
 		
 		pane.getChildren().addAll(vBoxForButtons);
 		
-		//quit the game if "quit" is cliked
+		//quit the game if "quit" is clicked
 		quitButton.setOnAction((e -> System.exit(0)));
 		
 		//get the number of players
@@ -116,8 +121,6 @@ public class MainView {
 			getPlayerInfo(vBoxForButtons);
 		});
 		
-		
-		
 		return pane;
 	}
 	
@@ -134,6 +137,9 @@ public class MainView {
 		vBoxForButtons.setAlignment(Pos.CENTER);
 		
 		GridPane gridPaneForInfo = new GridPane();
+		//gridPaneForInfo.setPadding(new Insets(11.5, 12.5, 13.5, 14.5));
+		gridPaneForInfo.setHgap(20);
+		gridPaneForInfo.setVgap(20);
 		gridPaneForInfo.setAlignment(Pos.CENTER);
 		
 		Label timeoutLabel = new Label("Time limit: ");
@@ -151,8 +157,29 @@ public class MainView {
 		TextField fieldMarker1;
 		TextField fieldMarker2 = new TextField();
 		
+		// create new buttons
+		RadioButton playFirst = new RadioButton("Yes");
+		RadioButton playSecond = new RadioButton("No");
+		
 		// when there is one player
 		if (numPlayer == 1) {
+			
+			// ask whether the human wants to play the first
+			Label wantGoFirstLabel = new Label ("Do you want to play first?");
+			
+				
+			// group the buttons together
+			ToggleGroup radioButtonsGroup = new ToggleGroup();
+			playFirst.setToggleGroup(radioButtonsGroup);
+			playSecond.setToggleGroup(radioButtonsGroup);
+			
+			// add buttons to the pane
+			gridPaneForInfo.add(wantGoFirstLabel, 0, 3);
+			gridPaneForInfo.add(playFirst, 1, 3);
+			gridPaneForInfo.add(playSecond, 2, 3);
+			// set a default selection
+			playFirst.setSelected(true);
+			
 			Label humanPlayerUsernameLabel = new Label ("Give yourself a user name: ");
 			gridPaneForInfo.add(humanPlayerUsernameLabel, 0, 1);
 			
@@ -199,37 +226,79 @@ public class MainView {
 		}
 		
 		
-		//quit the game if "quit" is cliked
+		//quit the game if "quit" is clicked
 		quitButton.setOnAction(e -> System.exit(0));
 		
-		// get timeout, username, marker when game starts
+		
+		
+		// get timeout, user name, marker when game starts
 		startButton.setOnAction(e -> {			
 		try {
+			String username1 = fieldUsername1.getText(), marker1 = fieldMarker1.getText(), username2, marker2;
 			timeout =Integer.parseInt(fieldTimeOut.getText());		
 			
-			username.add(fieldUsername1.getText());
-			marker.add(fieldMarker1.getText());
+			// one player, she/he goes first
+			if (numPlayer == 1) {
+				if (playFirst.isSelected()) {
+					humanPlayerID = 1;
+					
+					username.add(username1);
+					marker.add(marker1);
+					username.add("Computer");
+					if (!marker1.equals("X"))
+						marker.add("X");
+					else
+						marker.add("O");
+					
+				} else {
+					humanPlayerID = 2;
+					// one player, she/he goes second
+					if (!marker1.equals("X"))
+						marker.add("X");
+					else
+						marker.add("O");
+					username.add("Computer");
+					username.add(username1);
+					marker.add(marker1);
+				}
+				
+			} // end of one player
 			
-			if (numPlayer == 2) {
+			
+			// two players		
+			else {
+				username.add(username1);
+				marker.add(fieldMarker1.getText());
 				username.add(fieldUsername2.getText());
 				marker.add(fieldMarker2.getText());
-			}
-			else {
-				username.add("Computer");
-				marker.add("X");
 			}
 			
 			// create a game
 			ticTacToe.startNewGame(numPlayer, timeout);
 			
-			// create players
-			ticTacToe.createPlayer(username.get(0), marker.get(0), 1);
-			
+			// create players	
+			// one player
 			if (numPlayer == 1) {
+				// human first
+				if (humanPlayerID == 1) {
+					ticTacToe.setIsHumanPlayer(true);
+					ticTacToe.createPlayer(username.get(humanPlayerID-1), marker.get(humanPlayerID-1), humanPlayerID);				
+					ticTacToe.setIsHumanPlayer(false);
+					ticTacToe.createPlayer(username.get(2-humanPlayerID), marker.get(2-humanPlayerID), 3-humanPlayerID);
+				}
+				// human second
+				else {
+					ticTacToe.setIsHumanPlayer(false);
+					ticTacToe.createPlayer(username.get(2-humanPlayerID), marker.get(2-humanPlayerID), 3-humanPlayerID);
+					ticTacToe.setIsHumanPlayer(true);
+					ticTacToe.createPlayer(username.get(humanPlayerID-1), marker.get(humanPlayerID-1), humanPlayerID);		
+				}
+				
+			}
+			// two players
+			else {
 				ticTacToe.setIsHumanPlayer(true);
-				ticTacToe.createPlayer(username.get(1), marker.get(1), 2);
-			}else {
-				ticTacToe.setIsHumanPlayer(false);
+				ticTacToe.createPlayer(username.get(0), marker.get(0), 1);
 				ticTacToe.createPlayer(username.get(1), marker.get(1), 2);
 			}
 			
@@ -263,234 +332,68 @@ public class MainView {
 	public void playGame() {
 		// add a  game title
 		root.setTop(new CustomPane("Welcome to Tic Tac Toe!"));
-		root.setCenter(ticTacToe.getGameDisplay());
+
+		// computer make first moves if necessary
+		if (humanPlayerID == 2 && numPlayer == 1) {
+			// generate row & column, call updatePlayerMove
+			Random rand = new Random(); 
+			
+			int computerRow = rand.nextInt(3); 
+			int computerCol = rand.nextInt(3);
+			while (!MainView.ticTacToe.updatePlayerMove(computerRow, computerCol, 1)) {
+				computerRow = rand.nextInt(3); 
+				computerCol = rand.nextInt(3);
+			}
+		
+			BasicGameBoard.basicTwoD[computerRow][computerCol].setMarker(marker.get(0), false);
+			
+		}
 		
 		// show whose turn now
-		turnLabel = new Label (username.get(0) + "'s turn to play.");
+		turnLabel = new Label (username.get(ticTacToe.getPlayerID()-1) + "'s turn to play.");
 		Label timeLeft = new Label ("Time: ");
-		VBox vBoxForGame = new VBox(20);
+
+		
 		vBoxForGame.getChildren().addAll(turnLabel, timeLeft);
 		vBoxForGame.setAlignment(Pos.CENTER);
 		root.setBottom(vBoxForGame);
 		root.setPadding(new Insets(50));
 		
+		root.setBottom(vBoxForGame);
+		root.setPadding(new Insets(50));
 		
-	}
+		// create two buttons
+		Button playAgainButton = new Button("Play Again");
+		Button quitButton = new Button("Quit the game");
+		
+		if (Square.hBox.getChildren().size() == 0) {
+			Square.hBox.getChildren().addAll(playAgainButton, quitButton);
+
+		}
+		
+		// restart the game when "Play Again" works
+		((ButtonBase) Square.hBox.getChildren().get(0)).setOnAction(e -> {
+			// restart a game
+			ticTacToe.setIsReplay(true);
+			getMainView();
+		});
+		
+		// quit the game
+		((ButtonBase) Square.hBox.getChildren().get(1)).setOnAction(e -> {
+			// quit the game
+			System.exit(0);
+		});
+	} // end of playGame
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	public Scene getMainScene() {
 		return this.scene;
 	}
 	
-	/**
-	 * The setup pane is where a user can give input
-	 * for the initialization of the 2D array.
-	 * 
-	 * @return
-	 */
-	public GridPane buildSetupPane() {
-	    Text sizeLabel = new Text("Number rows & columns:");  
-	    Text defaultValLabel = new Text("Default value:");       
-        TextField sizeTextField = new TextField();
-        //TODO #1: Add a text field for a user to input a default value to init array       
-        TextField defaultValueTextField = new TextField();
-        
-        Button button1 = new Button("Submit"); 
-        button1.getStyleClass().add("submitButton");
-        Line line = new Line();
-        
-        
-        line.setStartX(0.0f); 
-        line.setStartY(0.0f);         
-        line.setEndX((float) windowWidth); 
-        line.setEndY(0.0f);
-        
-        //Creating the mouse event handler 
-        EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() { 
-           @Override 
-           public void handle(MouseEvent e) { 
-               String size = sizeTextField.getText();
-               
-               //TODO #2: Read the default input from the text field you created above
-               String defaultVal = "-1";
-               defaultVal = defaultValueTextField.getText();
-
-               build2DArrayPane(size, defaultVal);
-           } 
-        };  
-        //Registering the event filter 
-        button1.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);   
-
-        //Creating a Grid Pane 
-        GridPane gridPane = new GridPane();    
-        
-        //Setting size for the pane 
-        gridPane.setMinSize(windowWidth, (int) windowHeight/4); 
-        
-        //Setting the padding  
-        gridPane.setPadding(new Insets(10, 10, 10, 10)); 
-        
-        //Setting the vertical and horizontal gaps between the columns 
-        gridPane.setVgap(5); 
-        gridPane.setHgap(5);       
-        
-        //Setting the Grid alignment 
-        gridPane.setAlignment(Pos.CENTER); 
-        
-        gridPane.add(sizeLabel, 0, 0); 
-        //TODO #3: Remove comment so that the label will show
-        gridPane.add(defaultValLabel, 1, 0); 
-        
-        gridPane.add(sizeTextField, 0, 1); 
-        
-        //TODO #4: Add the text field for the default value
-        gridPane.add(defaultValueTextField, 1, 1); 
-        
-
-        gridPane.add(button1, 2, 1); 
-        gridPane.add(line, 0, 2, 3, 1); 
-              
-        return gridPane;
-	} // end of buildSetupPane
-	
-	public void build2DArrayPane(String size, String defaultVal) {
-		String text = "";
-		//Clear other panes
-		root.setLeft(new Text());
-		root.setRight(new Text());
-		
-		try {
-			int intSize =Integer.parseInt(size);
-			int intDefaultVal = Integer.parseInt(defaultVal);
-	       // twoDArr = new TwoDArray(intSize,intSize, intDefaultVal);
-	       // text = twoDArr.getArrayDisplay();
-	        System.out.println("Hello World " + intSize +", "+intDefaultVal); //this will print out on the command line, not the GUI
-			root.setLeft(build2DArrayInputPane());
-		}catch(NumberFormatException nfe) {
-			text = "Please enter integer values!";
-			
-		}
-		Text arrDisplay = new Text(text);
-		arrDisplay.setId("twoDArray");
-		
-		MotionBlur mb= new MotionBlur();
-		mb.setRadius(5.0f);
-		mb.setAngle(15.0f);
-		arrDisplay.setEffect(mb);
-		
-		//creating the rotation transformation 
-		Rotate rotate= new Rotate(); 
-		
-		//Setting the angle for the rotation 
-		rotate.setAngle(20); 
-		arrDisplay.getTransforms().addAll(rotate);
-		
-		
-		root.setCenter(arrDisplay);
-	} // end of build2DArrayPane
-	
-	public GridPane build2DArrayInputPane() {
-        Button button1 = new Button("Random Insert"); 
-        
-        //TODO #5: Create a mouse event handler to call updateArrayValue()
-        //The following, indented code goes into the event handler
-	        //At some point, you could use text fields to input the row, col and value
-	        //updateArrayValue(rowTextField.getText(), colTextField.getText(), valTextField.getText());
-	
-	        //For now, we'll randomly generate values and pass them to the 
-	        //updateArrayValue() function as Strings
-	        /**
-			 * The method floor() gives the largest integer 
-			 * that is less than or equal to the argument.
-			 */
-        EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
-        	@Override
-        	public void handle (MouseEvent e) {
-        		int col = (int)Math.floor((Math.random() * 10));		
-    			int row = (int)Math.floor((Math.random() * 10));
-    			int val = (int)(Math.random() * 99);
-    	        updateArrayValue(Integer.toString(row), Integer.toString(col), Integer.toString(val));
-        	}
-        };
-			
-        
-        //Registering the event filter 
-        //TODO #6: Remove comment
-        button1.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);   
-
-        //Creating a Grid Pane 
-        GridPane gridPane = new GridPane();    
-        
-        //Setting size for the pane 
-        gridPane.setMinSize(400, 200); 
-        
-        //Setting the padding  
-        gridPane.setPadding(new Insets(10, 10, 10, 10)); 
-        
-        //Setting the vertical and horizontal gaps between the columns 
-        gridPane.setVgap(5); 
-        gridPane.setHgap(5);       
-        
-        //Setting the Grid alignment 
-        gridPane.setAlignment(Pos.CENTER); 
-               
-        gridPane.add(button1, 0, 6); 
-        gridPane.add(statusNode, 0, 8); 
-        statusNode.setStyle("-fx-fill: grey;");
-        
-        return gridPane;
-
-	} // end of build2DArrayInputPane
-	
-	public void updateArrayValue(String row, String col, String val) {
-			String text = "";
-			String status = "";
-			try {
-				int intRow =Integer.parseInt(row);
-				int intCol = Integer.parseInt(col);
-				int intVal = Integer.parseInt(val);
-		        //status = twoDArr.insertInt(intRow, intCol, intVal);
-		       // text = twoDArr.getArrayDisplay();
-			}catch(NumberFormatException nfe) {
-				text = "Please enter integer values!";
-				
-			}
-								
-			
-			Text textNode = new Text(text);
-			textNode.setId("twoDArray");
-			textNode.setTextAlignment(TextAlignment.CENTER);
-			
-			RotateTransition rotateTransition= new RotateTransition(); 
-			
-			//Setting the duration for the transition 
-			rotateTransition.setDuration(Duration.millis(1000)); 
-			
-			//Setting the node for the transition
-			rotateTransition.setNode(textNode); 
-			
-			//Setting the angle of the rotation 
-			rotateTransition.setByAngle(360); 
-			
-			//Setting the cycle count for the transition 
-			rotateTransition.setCycleCount(5); 
-			
-			//Playing the animation 
-			rotateTransition.play(); 
-			
-			root.setCenter(textNode);
-			statusNode.setText(status);
-
+	public static int getHumanPlyaerID() {
+		return humanPlayerID;
 	}
-	
 
 }
 
