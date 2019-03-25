@@ -103,6 +103,7 @@ public class Square extends BorderPane{
 						}
 		
 						else {
+							// change turn
 							MainView.turnLabel.setText(MainView.ticTacToe.player.get(MainView.ticTacToe.setCurrentPlayer(currentPlayerID)-1).getUsername() + "'s turn to play.");
 						}
 						

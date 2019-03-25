@@ -6,7 +6,8 @@ import java.util.Random;
 import oop.board.BasicGameBoard;
 import oop.board.square.Square;
 import oop.controller.*;
-
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -22,6 +23,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 //import main.course.oop.tictactoe.util.TwoDArray;
 
@@ -40,6 +42,7 @@ public class MainView {
 	ArrayList<String> username = new ArrayList<>();
 	ArrayList<String> marker = new ArrayList<>();
 	private static int humanPlayerID = 1;
+	public static Timeline timer;
 	
     private final int windowWidth = 900;
     private final int windowHeight = 900;
@@ -50,12 +53,8 @@ public class MainView {
 		this.scene = new Scene(root, windowWidth, windowHeight);
 
 		scene.getStylesheets().add(getClass().getResource("main.css").toExternalForm());
-		
-		
-		// original professor
-		//this.root.setTop(this.buildSetupPane());
-		getMainView();
-		
+
+		getMainView();		
 		
 	} //end of MainView
 	
@@ -75,6 +74,7 @@ public class MainView {
 	public StackPane getNumPlayers() {
 		this.pane = new StackPane();
 		
+		// create a pane for buttons
 		VBox vBoxForButtons = new VBox(30);
 		
 		
@@ -332,30 +332,68 @@ public class MainView {
 	public void playGame() {
 		// add a  game title
 		root.setTop(new CustomPane("Welcome to Tic Tac Toe!"));
-
-		// computer make first moves if necessary
+		
+		// show the game board
+		root.setCenter(ticTacToe.getGameDisplay());
+		
+		// computer makes first moves if necessary
 		if (humanPlayerID == 2 && numPlayer == 1) {
 			// generate row & column, call updatePlayerMove
-			Random rand = new Random(); 
+			AIMove();
 			
-			int computerRow = rand.nextInt(3); 
-			int computerCol = rand.nextInt(3);
-			while (!MainView.ticTacToe.updatePlayerMove(computerRow, computerCol, 1)) {
-				computerRow = rand.nextInt(3); 
-				computerCol = rand.nextInt(3);
-			}
+		} // end of  computer first move
 		
-			BasicGameBoard.basicTwoD[computerRow][computerCol].setMarker(marker.get(0), false);
-			
-		}
-		
+					
 		// show whose turn now
 		turnLabel = new Label (username.get(ticTacToe.getPlayerID()-1) + "'s turn to play.");
 		Label timeLeft = new Label ("Time: ");
-
 		
 		vBoxForGame.getChildren().addAll(turnLabel, timeLeft);
 		vBoxForGame.setAlignment(Pos.CENTER);
+		
+		
+		
+		
+		
+		
+		// add timeout
+		if (timeout > 0) {
+			// start the timer, when time is up, change playerID and restart animation
+			// when a valid move is made, change playerID and restart animation
+			timer = new Timeline(new KeyFrame(Duration.millis(timeout*1000), e-> {
+				int curPlayerID = ticTacToe.setCurrentPlayer(ticTacToe.getPlayerID());
+				// show whose turn now
+				turnLabel.setText(username.get(curPlayerID-1) + "'s turn to play.");
+				// computer makes a move
+				// generate row & column, call updatePlayerMove
+				if (numPlayer == 1) {
+					AIMove();
+					if (ticTacToe.getGameState() !=0) {
+						timer.stop();
+						turnLabel.setText(username.get(humanPlayerID-1) + " lost the game.");
+						Square.hBox.setAlignment(Pos.CENTER);
+						MainView.vBoxForGame.getChildren().add(Square.hBox);
+					}
+					curPlayerID = ticTacToe.getPlayerID();
+				} // end of numPlayer == 1
+				
+				// show whose turn now
+				if (ticTacToe.getGameState() == 0) {
+					turnLabel.setText(username.get(curPlayerID-1) + "'s turn to play.");
+				}
+			
+			}));
+			
+			timer.setCycleCount(9);
+			timer.play();
+		} // end of timeout
+		
+			
+			
+			
+			
+			
+		
 		root.setBottom(vBoxForGame);
 		root.setPadding(new Insets(50));
 		
@@ -394,8 +432,22 @@ public class MainView {
 	public static int getHumanPlyaerID() {
 		return humanPlayerID;
 	}
+	
+	public void AIMove() {
+		Random rand = new Random(); 
+		int computerRow = rand.nextInt(3); 
+		int computerCol = rand.nextInt(3);
+		while (!MainView.ticTacToe.updatePlayerMove(computerRow, computerCol, 3-humanPlayerID)) {
+			computerRow = rand.nextInt(3); 
+			computerCol = rand.nextInt(3);
+		}
+	
+		BasicGameBoard.basicTwoD[computerRow][computerCol].setMarker(marker.get(2-humanPlayerID), false);
+	}
+	
 
 }
+
 
 
 // customePane
