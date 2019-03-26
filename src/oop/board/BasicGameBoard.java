@@ -71,7 +71,7 @@ public class BasicGameBoard {
 	
 	// check if there is a winner
 	public boolean hasWon(int row, int col, String marker) {
-		
+			System.out.println("marker: " + marker);
 			// check if three same markers are in one row
 			for (int i = 0; i < 3; i++) {
 				if(basicTwoD[i][0].display().equals(marker)

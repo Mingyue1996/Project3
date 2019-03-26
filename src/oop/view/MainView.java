@@ -21,7 +21,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -54,6 +56,7 @@ public class MainView {
     private Text timeStringErrorText = new Text ("Time out must be an integer");
     private Text duplicateInputsText = new Text ("Two players cannot use the same username or marker.");
     
+    public static final String MEDIA_URL_WIN = "src/winSound.mp3";
     //public static Timeline timerSquare;
     
 	public MainView() {
@@ -183,9 +186,9 @@ public class MainView {
 			playSecond.setToggleGroup(radioButtonsGroup);
 			
 			// add buttons to the pane
-			gridPaneForInfo.add(wantGoFirstLabel, 0, 3);
-			gridPaneForInfo.add(playFirst, 1, 3);
-			gridPaneForInfo.add(playSecond, 2, 3);
+			gridPaneForInfo.add(wantGoFirstLabel, 0, 4);
+			gridPaneForInfo.add(playFirst, 1, 4);
+			gridPaneForInfo.add(playSecond, 2, 4);
 			// set a default selection
 			playFirst.setSelected(true);
 			
@@ -423,6 +426,9 @@ public class MainView {
 						// stop the timer when game is over
 						timer.stop();
 						// show the human lost the game
+
+						Square.playSound("src/loseSound.mp3");
+						
 						turnLabel.setText(username.get(humanPlayerID-1) + " lost the game.");
 						// show the two buttons (play again and quit)
 						Square.hBox.setAlignment(Pos.CENTER);

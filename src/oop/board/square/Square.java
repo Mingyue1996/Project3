@@ -1,5 +1,6 @@
 package oop.board.square;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -9,6 +10,9 @@ import javafx.animation.Timeline;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import oop.board.BasicGameBoard;
@@ -85,12 +89,7 @@ public class Square extends BorderPane{
 			// mark the square if the square is available 
 			if (!this.getIsMarked()) {
 				
-				// change player if a human makes a move
-				if (!MainView.getIsAIMove()) {
-					// newly add
-					currentPlayerID = MainView.ticTacToe.setCurrentPlayer(currentPlayerID);
-
-				}
+				
 				
 				//if (MainView.getTimeout() > 0) {
 				if (MainView.getTimeout() > 0) {
@@ -158,7 +157,12 @@ public class Square extends BorderPane{
 				// game is going on
 				else {
 					// change turn
+					// change player if a human makes a move
+					if (!MainView.getIsAIMove()) {
+						// newly add
+						currentPlayerID = MainView.ticTacToe.setCurrentPlayer(currentPlayerID);
 
+					}
 					// newly remove
 					//currentPlayerID = MainView.ticTacToe.setCurrentPlayer(currentPlayerID);
 					MainView.turnLabel.setText(MainView.ticTacToe.player.get(currentPlayerID -1).getUsername() + "'s turn to play.");
@@ -295,8 +299,21 @@ public class Square extends BorderPane{
 		// someone won the game
 		if ( gameState == 1 || gameState == 2) {
 			MainView.turnLabel.setText(MainView.ticTacToe.player.get(currentPlayerID-1).getUsername() + " won the game.");
+
+			if ( MainView.ticTacToe.getNumberPlayers() == 2 || (MainView.ticTacToe.getNumberPlayers() == 1 && currentPlayerID == MainView.getHumanPlyaerID() ) ) {
+				playSound("src/winSound.mp3");
+			}
+			else if (MainView.ticTacToe.getNumberPlayers() == 1 && currentPlayerID != MainView.getHumanPlyaerID()) {
+				playSound("src/loseSound.mp3");
+			}
 			
 	
+			//AudioClip plonkSound = new AudioClip("https://vocaroo.com/i/s1Ho8LVVYJRD");
+			 //plonkSound.play();
+			
+
+			 //AudioClip plonkSound = new AudioClip("http://www.mario-museum.net/sons/smb2_roulette-victoire.wav");
+			// plonkSound.play();
 		}
 		// there is a tie
 		else if (gameState == 3) {
@@ -316,4 +333,11 @@ public class Square extends BorderPane{
 			timerLists.clear();
 		
 	}
+	
+	public static void playSound(final String FILE_PATH) {
+		Media media_win = new Media (Paths.get(FILE_PATH).toUri().toString()); //https://vocaroo.com/i/s1Ho8LVVYJRD
+		MediaPlayer mediaPlayer = new MediaPlayer(media_win);
+		mediaPlayer.setAutoPlay(true);
+		mediaPlayer.play();
+	} // end of playSound()
 } // end of Square class
