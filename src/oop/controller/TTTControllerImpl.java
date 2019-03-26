@@ -180,6 +180,7 @@ public class TTTControllerImpl implements TTTControllerInterface {
 	
 	public boolean updatePlayerMove(int row, int col, int playerID) {
 		marker = player.get(playerID-1).getMarker();
+		this.playerID = playerID;
 		if (basicGameBoard.markBoard(row, col, marker)) {
 			player.get(playerID-1).makeMove(row, col);
 			// check win

@@ -36,17 +36,26 @@ public class MainView {
 	public static TTTControllerImpl ticTacToe = new TTTControllerImpl();
 	
 	private int numPlayer;
-	private int timeout = 0;
+	private static int timeout = 0;
 	public static Label turnLabel = new Label();
 	
 	ArrayList<String> username = new ArrayList<>();
 	ArrayList<String> marker = new ArrayList<>();
 	private static int humanPlayerID = 1;
 	public static Timeline timer;
+	private static boolean isAIMove = false;
+	
+	private boolean emptyErrors = false;
+	private boolean duplicateErrors = false;
 	
     private final int windowWidth = 900;
     private final int windowHeight = 900;
-	
+    private Text emptyInputsText = new Text ("User name(s) and marker(s) cannot be empty.");	
+    private Text timeStringErrorText = new Text ("Time out must be an integer");
+    private Text duplicateInputsText = new Text ("Two players cannot use the same username or marker.");
+    
+    //public static Timeline timerSquare;
+    
 	public MainView() {
 		
 		MainView.root = new BorderPane();
@@ -234,91 +243,130 @@ public class MainView {
 		// get timeout, user name, marker when game starts
 		startButton.setOnAction(e -> {			
 		try {
-			String username1 = fieldUsername1.getText(), marker1 = fieldMarker1.getText(), username2, marker2;
+			String username1 = fieldUsername1.getText(), marker1 = fieldMarker1.getText(), username2 = fieldUsername2.getText(), marker2 = fieldMarker2.getText();
+			if (emptyErrors && duplicateErrors) {
+				gridPaneForInfo.getChildren().remove(emptyInputsText);
+				gridPaneForInfo.getChildren().remove(duplicateInputsText);
+				
+			} // end of remove errors
+			else if (emptyErrors && !duplicateErrors) {
+				gridPaneForInfo.getChildren().remove(emptyInputsText);
+			}
+			else if (!emptyErrors && duplicateErrors) {
+				gridPaneForInfo.getChildren().remove(duplicateInputsText);
+			}
+			emptyErrors = false;
+			duplicateErrors = false;
+			
+			
+			
+			// user names and markers cannot be empty
+			if (username1.trim().length() == 0 || marker1.trim().length() == 0 || ( numPlayer == 2 && (username2.trim().length() == 0 || marker2.trim().length() == 0))) {
+				emptyErrors = true;
+				gridPaneForInfo.add(emptyInputsText, 0, 5);
+			}
+			
+			// user names and markers cannot be the same
+			if (numPlayer == 2) {
+				if ((username1.trim().length() != 0 && username1.equals(username2)) || ( marker1.trim().length() != 0 && marker1.equals(marker2))) {
+					duplicateErrors = true;
+					
+					if (emptyErrors) {
+						gridPaneForInfo.add(duplicateInputsText, 0, 6);
+					}
+					else {
+						gridPaneForInfo.add(duplicateInputsText, 0, 5);
+					}
+					
+				}
+			}
+			
+			System.out.println("grid pane size: " + gridPaneForInfo.getChildren().size());
+			//System.out.println("empty errors: " + emptyErrors + " duplicateErrors: " + duplicateErrors);
+			
 			timeout =Integer.parseInt(fieldTimeOut.getText());		
-			
-			// one player, she/he goes first
-			if (numPlayer == 1) {
-				if (playFirst.isSelected()) {
-					humanPlayerID = 1;
+			if (!duplicateErrors && !emptyErrors) {
+				// one player, she/he goes first
+				if (numPlayer == 1) {
+					if (playFirst.isSelected()) {
+						humanPlayerID = 1;
+						
+						username.add(username1);
+						marker.add(marker1);
+						username.add("Computer");
+						if (!marker1.equals("X"))
+							marker.add("X");
+						else
+							marker.add("O");
+						
+					} else {
+						humanPlayerID = 2;
+						// one player, she/he goes second
+						if (!marker1.equals("X"))
+							marker.add("X");
+						else
+							marker.add("O");
+						username.add("Computer");
+						username.add(username1);
+						marker.add(marker1);
+					}
 					
-					username.add(username1);
-					marker.add(marker1);
-					username.add("Computer");
-					if (!marker1.equals("X"))
-						marker.add("X");
-					else
-						marker.add("O");
-					
-				} else {
-					humanPlayerID = 2;
-					// one player, she/he goes second
-					if (!marker1.equals("X"))
-						marker.add("X");
-					else
-						marker.add("O");
-					username.add("Computer");
-					username.add(username1);
-					marker.add(marker1);
-				}
+				} // end of one player
 				
-			} // end of one player
-			
-			
-			// two players		
-			else {
-				username.add(username1);
-				marker.add(fieldMarker1.getText());
-				username.add(fieldUsername2.getText());
-				marker.add(fieldMarker2.getText());
-			}
-			
-			// create a game
-			ticTacToe.startNewGame(numPlayer, timeout);
-			
-			// create players	
-			// one player
-			if (numPlayer == 1) {
-				// human first
-				if (humanPlayerID == 1) {
-					ticTacToe.setIsHumanPlayer(true);
-					ticTacToe.createPlayer(username.get(humanPlayerID-1), marker.get(humanPlayerID-1), humanPlayerID);				
-					ticTacToe.setIsHumanPlayer(false);
-					ticTacToe.createPlayer(username.get(2-humanPlayerID), marker.get(2-humanPlayerID), 3-humanPlayerID);
-				}
-				// human second
+				
+				// two players		
 				else {
-					ticTacToe.setIsHumanPlayer(false);
-					ticTacToe.createPlayer(username.get(2-humanPlayerID), marker.get(2-humanPlayerID), 3-humanPlayerID);
-					ticTacToe.setIsHumanPlayer(true);
-					ticTacToe.createPlayer(username.get(humanPlayerID-1), marker.get(humanPlayerID-1), humanPlayerID);		
+					username.add(username1);
+					marker.add(fieldMarker1.getText());
+					username.add(fieldUsername2.getText());
+					marker.add(fieldMarker2.getText());
 				}
 				
-			}
-			// two players
-			else {
-				ticTacToe.setIsHumanPlayer(true);
-				ticTacToe.createPlayer(username.get(0), marker.get(0), 1);
-				ticTacToe.createPlayer(username.get(1), marker.get(1), 2);
-			}
-			
-			// clear all the elements in pane
-			pane.getChildren().clear();
-			gridPaneForInfo.getChildren().clear();
-			root.getChildren().clear();
-			
-			// play game
-			playGame();
-			
+				// create a game
+				ticTacToe.startNewGame(numPlayer, timeout);
+				
+				// create players	
+				// one player
+				if (numPlayer == 1) {
+					// human first
+					if (humanPlayerID == 1) {
+						ticTacToe.setIsHumanPlayer(true);
+						ticTacToe.createPlayer(username.get(humanPlayerID-1), marker.get(humanPlayerID-1), humanPlayerID);				
+						ticTacToe.setIsHumanPlayer(false);
+						ticTacToe.createPlayer(username.get(2-humanPlayerID), marker.get(2-humanPlayerID), 3-humanPlayerID);
+					}
+					// human second
+					else {
+						ticTacToe.setIsHumanPlayer(false);
+						ticTacToe.createPlayer(username.get(2-humanPlayerID), marker.get(2-humanPlayerID), 3-humanPlayerID);
+						ticTacToe.setIsHumanPlayer(true);
+						ticTacToe.createPlayer(username.get(humanPlayerID-1), marker.get(humanPlayerID-1), humanPlayerID);		
+					}
+					
+				}
+				// two players
+				else {
+					ticTacToe.setIsHumanPlayer(true);
+					ticTacToe.createPlayer(username.get(0), marker.get(0), 1);
+					ticTacToe.createPlayer(username.get(1), marker.get(1), 2);
+				}
+				
+				// clear all the elements in pane
+				pane.getChildren().clear();
+				gridPaneForInfo.getChildren().clear();
+				root.getChildren().clear();
+				
+				// play game
+				playGame();
+			} // end of error exists
 		} catch (NumberFormatException error){
-			Text errorText = new Text ("Time out must be an integer");		
 
-			int size = gridPaneForInfo.getChildren().size();
-			if (size == 7 || size == 11) {
-				gridPaneForInfo.getChildren().remove(size-1);
+			
+			if (gridPaneForInfo.getChildren().contains(timeStringErrorText)) {
+				gridPaneForInfo.getChildren().remove(timeStringErrorText);
 			}
 							
-			gridPaneForInfo.add(errorText, 2, 0);
+			gridPaneForInfo.add(timeStringErrorText, 2, 0);
 			
 		} // end of catch
 		
@@ -361,19 +409,27 @@ public class MainView {
 			// start the timer, when time is up, change playerID and restart animation
 			// when a valid move is made, change playerID and restart animation
 			timer = new Timeline(new KeyFrame(Duration.millis(timeout*1000), e-> {
+				// when the timer is called, the previous player does not make a move, so we need to change the player ID here
 				int curPlayerID = ticTacToe.setCurrentPlayer(ticTacToe.getPlayerID());
 				// show whose turn now
 				turnLabel.setText(username.get(curPlayerID-1) + "'s turn to play.");
-				// computer makes a move
+				// computer makes a move (If a human moves, then this timer would not be called)
 				// generate row & column, call updatePlayerMove
 				if (numPlayer == 1) {
 					AIMove();
-					if (ticTacToe.getGameState() !=0) {
+					isAIMove = true;
+					// when the game is over
+					if (ticTacToe.getGameState() != 0) {
+						// stop the timer when game is over
 						timer.stop();
+						// show the human lost the game
 						turnLabel.setText(username.get(humanPlayerID-1) + " lost the game.");
+						// show the two buttons (play again and quit)
 						Square.hBox.setAlignment(Pos.CENTER);
 						MainView.vBoxForGame.getChildren().add(Square.hBox);
-					}
+					} // end of game over
+					
+					// get Current Player (must be a human since computer already changes player ID)
 					curPlayerID = ticTacToe.getPlayerID();
 				} // end of numPlayer == 1
 				
@@ -445,7 +501,17 @@ public class MainView {
 		BasicGameBoard.basicTwoD[computerRow][computerCol].setMarker(marker.get(2-humanPlayerID), false);
 	}
 	
+	public static int getTimeout() {
+		return timeout;
+	}
 
+	public static boolean getIsAIMove() {
+		return isAIMove;
+	}
+	
+	public static void setIsAIMove(boolean isMove) {
+		isAIMove = isMove;
+	}
 }
 
 
@@ -456,6 +522,13 @@ class CustomPane extends StackPane {
 		Text textTitle = new Text(title);
 		getChildren().add(textTitle);
 		textTitle.getStyleClass().add("textTitle");
+	}
+}
+
+// customeException
+class InvalidExceptions extends Exception {
+	InvalidExceptions (String username1, String username2, String marker1, String marker2) {
+		
 	}
 }
 
