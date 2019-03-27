@@ -53,11 +53,13 @@ public class MainView {
 	private boolean emptyErrors = false;
 	private boolean duplicateErrors = false;
 	
-    private final int windowWidth = 900;
+    private final int windowWidth = 1000;
     private final int windowHeight = 900;
     private Text emptyInputsText = new Text ("User name(s) and marker(s) cannot be empty.");	
     private Text timeStringErrorText = new Text ("Time out must be an integer");
     private Text duplicateInputsText = new Text ("Two players cannot use the same username or marker.");
+    private static boolean isImageMarker1 = false;
+    private static boolean isImageMarker2 = false;
     
     public static final String MEDIA_URL_WIN = "src/winSound.mp3";
     //public static Timeline timerSquare;
@@ -83,6 +85,8 @@ public class MainView {
 		//clear user name and marker lists
 		username.clear();
 		marker.clear();
+		isImageMarker1 = false;
+		isImageMarker2 = false;
 	}
 	
 	
@@ -180,18 +184,18 @@ public class MainView {
 		if (numPlayer == 1) {
 			
 			// ask whether the human wants to play the first
-			Label wantGoFirstLabel = new Label ("Do you want to play first?");
+			//Label wantGoFirstLabel = new Label ("Do you want to play first?");
 			
 				
 			// group the buttons together
-			ToggleGroup radioButtonsGroup = new ToggleGroup();
-			playFirst.setToggleGroup(radioButtonsGroup);
-			playSecond.setToggleGroup(radioButtonsGroup);
+			//ToggleGroup radioButtonsGroup = new ToggleGroup();
+			//playFirst.setToggleGroup(radioButtonsGroup);
+		//	playSecond.setToggleGroup(radioButtonsGroup);
 			
 			// add buttons to the pane
-			gridPaneForInfo.add(wantGoFirstLabel, 0, 4);
-			gridPaneForInfo.add(playFirst, 1, 4);
-			gridPaneForInfo.add(playSecond, 2, 4);
+			//gridPaneForInfo.add(wantGoFirstLabel, 0, 4);
+			//gridPaneForInfo.add(playFirst, 1, 4);
+			//gridPaneForInfo.add(playSecond, 2, 4);
 			// set a default selection
 			playFirst.setSelected(true);
 			
@@ -221,14 +225,14 @@ public class MainView {
 			
 			// add player 2's user name
 			Label player2UsernameLabel = new Label("Enter palyer 2's user name");
-			gridPaneForInfo.add(player2UsernameLabel, 0, 3);
+			gridPaneForInfo.add(player2UsernameLabel, 0, 4);
 			
 			// add player 2's user name
 			Label player2MarkerLabel = new Label("Enter palyer 2's marker");
-		    gridPaneForInfo.add(player2MarkerLabel, 0, 4);
+		    gridPaneForInfo.add(player2MarkerLabel, 0, 5);
 			
 			// add them to field
-			gridPaneForInfo.add(fieldUsername2, 1, 3);
+			gridPaneForInfo.add(fieldUsername2, 1, 4);
 		}
 		
 		// add a textField for player1 user name
@@ -244,7 +248,6 @@ public class MainView {
 		
 		
 		// add radio buttons
-
 		RadioButton enterMarkerButton = new RadioButton("Enter a string");
 		RadioButton chooseImageButton = new RadioButton("Choose an image");
 		
@@ -282,6 +285,60 @@ public class MainView {
 		rbUS.setToggleGroup(radioButtonsImageGroup);
 		rbCN.setToggleGroup(radioButtonsImageGroup);
 		rbGB.setToggleGroup(radioButtonsImageGroup);
+		
+		// add radio buttons
+
+		RadioButton enterMarkerButton2 = new RadioButton("Enter a string");
+		RadioButton chooseImageButton2 = new RadioButton("Choose an image");
+		
+		
+		RadioButton rbUS2 = new RadioButton("US");
+		RadioButton rbCN2 = new RadioButton("China");
+		RadioButton rbGB2 = new RadioButton("United Kingdom");
+		
+		
+if (numPlayer == 2) {
+			
+			// create image selection for player2
+			
+			// group the buttons together
+			ToggleGroup radioButtonsGroup2 = new ToggleGroup();
+			enterMarkerButton2.setToggleGroup(radioButtonsGroup2);
+			chooseImageButton2.setToggleGroup(radioButtonsGroup2);
+						
+			
+			gridPaneForInfo.add(enterMarkerButton2, 1, 5);
+			gridPaneForInfo.add(chooseImageButton2, 2, 5);
+			
+			enterMarkerButton2.setSelected(true);
+			gridPaneForInfo.add(fieldMarker2, 1, 6);
+			
+			
+			// create rbUS
+			rbUS2.setGraphic(new ImageView(Paths.get("src/us.png").toUri().toString()));
+			rbUS2.setContentDisplay(ContentDisplay.LEFT);
+			rbUS2.setSelected(true);
+			
+			// create rbCN
+			rbCN2.setGraphic(new ImageView(Paths.get("src/cn.png").toUri().toString()));
+			rbCN2.setContentDisplay(ContentDisplay.LEFT);
+			
+			// create rbGB
+			rbGB2.setGraphic(new ImageView(Paths.get("src/gb.png").toUri().toString()));
+			rbGB2.setContentDisplay(ContentDisplay.LEFT);
+		
+			// group the buttons together
+			ToggleGroup radioButtonsImageGroup2 = new ToggleGroup();
+			rbUS2.setToggleGroup(radioButtonsImageGroup2);
+			rbCN2.setToggleGroup(radioButtonsImageGroup2);
+			rbGB2.setToggleGroup(radioButtonsImageGroup2);
+			
+			
+			
+		} // end of numPlayer == 2
+		
+		
+		
 		
 		enterMarkerButton.setOnAction(e -> {
 			if (enterMarkerButton.isSelected()) {
@@ -326,12 +383,49 @@ public class MainView {
 			} // end of if ImageButton is selected
 		});
 		
+		// select enter a marker2
+		enterMarkerButton2.setOnAction(e -> {
+			if (enterMarkerButton2.isSelected()) {
+				// add text field
+				if (!gridPaneForInfo.getChildren().contains(fieldMarker2)) {
+					gridPaneForInfo.add(fieldMarker2, 1, 6);
+				}
+				
+				// remove image buttons
+				if (gridPaneForInfo.getChildren().contains(rbUS2)) {
+					gridPaneForInfo.getChildren().remove(rbUS2);
+				}
+				if (gridPaneForInfo.getChildren().contains(rbCN2)) {
+					gridPaneForInfo.getChildren().remove(rbCN2);
+				}
+				if (gridPaneForInfo.getChildren().contains(rbGB2)) {
+					gridPaneForInfo.getChildren().remove(rbGB2);
+				}
+			} // end of enterMarkerButton is selected
+		});
 		
-		if (numPlayer == 2) {
-			// add marker2 to field
-			gridPaneForInfo.add(fieldMarker2, 1, 4); 
-		}
-		
+		// imageButton2
+		chooseImageButton2.setOnAction(e -> {
+			if (chooseImageButton2.isSelected()) {
+				// remove text field
+				if (gridPaneForInfo.getChildren().contains(fieldMarker2)) {
+					gridPaneForInfo.getChildren().remove(fieldMarker2);
+				}			
+
+				
+				// add image radio buttons
+				if (!gridPaneForInfo.getChildren().contains(rbUS2)) {
+					gridPaneForInfo.add(rbUS2, 1, 6);
+				}
+				if (!gridPaneForInfo.getChildren().contains(rbCN2)) {
+					gridPaneForInfo.add(rbCN2, 2, 6);
+				}
+				if (!gridPaneForInfo.getChildren().contains(rbGB2)) {
+					gridPaneForInfo.add(rbGB2, 3, 6);
+				}
+				
+			} // end of if ImageButton is selected
+		});
 		
 		
 		//quit the game if "quit" is clicked
@@ -343,44 +437,76 @@ public class MainView {
 		startButton.setOnAction(e -> {			
 		try {
 			String username1 = fieldUsername1.getText(), marker1 = fieldMarker1.getText(), username2 = fieldUsername2.getText(), marker2 = fieldMarker2.getText();
-			if (emptyErrors && duplicateErrors) {
+			
+			// if an image is selected for player1
+			if (chooseImageButton.isSelected()) {
+				isImageMarker1 = true;
+				// check which image is selected and store its directory
+				if (rbUS.isSelected()) {
+					marker1 = "us.png";
+				}
+				else if (rbCN.isSelected()) {
+					marker1 = "cn.png";
+				}
+				else if (rbGB.isSelected()) {
+					marker1 = "gb.png";
+				}
+			} // end of if an image is selected
+			
+			
+			if (numPlayer == 2 && chooseImageButton2.isSelected()) {
+				isImageMarker2 = true;
+				// check which image is selected and store its directory
+				if (rbUS2.isSelected()) {
+					marker2 = "us.png";
+				}
+				else if (rbCN2.isSelected()) {
+					marker2 = "cn.png";
+				}
+				else if (rbGB2.isSelected()) {
+					marker2 = "gb.png";
+				}
+			} // end of numPlayer == 2
+			
+			
+			if (gridPaneForInfo.getChildren().contains(emptyInputsText)) {
 				gridPaneForInfo.getChildren().remove(emptyInputsText);
-				gridPaneForInfo.getChildren().remove(duplicateInputsText);
 				
 			} // end of remove errors
-			else if (emptyErrors && !duplicateErrors) {
-				gridPaneForInfo.getChildren().remove(emptyInputsText);
-			}
-			else if (!emptyErrors && duplicateErrors) {
+			if (gridPaneForInfo.getChildren().contains(duplicateInputsText)) {
 				gridPaneForInfo.getChildren().remove(duplicateInputsText);
 			}
 			emptyErrors = false;
 			duplicateErrors = false;
 			
-			
+			if (!chooseImageButton.isSelected()) {
+				isImageMarker1 = false;
+			}
+			if (!chooseImageButton2.isSelected()) {
+				isImageMarker2 = false;
+			}
 			
 			// user names and markers cannot be empty
-			if (username1.trim().length() == 0 || marker1.trim().length() == 0 || ( numPlayer == 2 && (username2.trim().length() == 0 || marker2.trim().length() == 0))) {
+			if  (username1.trim().length() == 0 || (marker1.trim().length() == 0 && !isImageMarker1) || ( numPlayer == 2 && (username2.trim().length() == 0 ||( marker2.trim().length() == 0) && !isImageMarker2))) {
 				emptyErrors = true;
-				gridPaneForInfo.add(emptyInputsText, 0, 5);
+				gridPaneForInfo.add(emptyInputsText, 0, 7);
 			}
 			
 			// user names and markers cannot be the same
 			if (numPlayer == 2) {
-				if ((username1.trim().length() != 0 && username1.equals(username2)) || ( marker1.trim().length() != 0 && marker1.equals(marker2))) {
+				if ((username1.trim().length() != 0 && username1.equals(username2)) || ( marker1.trim().length() != 0 && marker1.equals(marker2) && !isImageMarker1 && !isImageMarker2) || (isImageMarker1 && isImageMarker2 && marker1.equals(marker2))) {
 					duplicateErrors = true;
-					
 					if (emptyErrors) {
-						gridPaneForInfo.add(duplicateInputsText, 0, 6);
+						gridPaneForInfo.add(duplicateInputsText, 0, 8);
 					}
 					else {
-						gridPaneForInfo.add(duplicateInputsText, 0, 5);
+						gridPaneForInfo.add(duplicateInputsText, 0, 7);
 					}
 					
 				}
-			}
+			} // end of numPlayer == 2
 			
-			System.out.println("grid pane size: " + gridPaneForInfo.getChildren().size());
+			System.out.println("marker1: "+ marker1);
 			//System.out.println("empty errors: " + emptyErrors + " duplicateErrors: " + duplicateErrors);
 			
 			timeout =Integer.parseInt(fieldTimeOut.getText());		
@@ -416,9 +542,9 @@ public class MainView {
 				// two players		
 				else {
 					username.add(username1);
-					marker.add(fieldMarker1.getText());
-					username.add(fieldUsername2.getText());
-					marker.add(fieldMarker2.getText());
+					marker.add(marker1);
+					username.add(username2);
+					marker.add(marker2);
 				}
 				
 				// create a game
@@ -483,8 +609,10 @@ public class MainView {
 		// show the game board
 		root.setCenter(ticTacToe.getGameDisplay());
 		
+		
 		// computer makes first moves if necessary
 		if (humanPlayerID == 2 && numPlayer == 1) {
+			isAIMove = true;
 			// generate row & column, call updatePlayerMove
 			AIMove();
 			
@@ -614,6 +742,14 @@ public class MainView {
 	public static void setIsAIMove(boolean isMove) {
 		isAIMove = isMove;
 	}
+	
+	public static boolean getIsImageMarker1 () {
+		return isImageMarker1;
+	}
+	
+	public static boolean getIsImageMarker2 () {
+		return isImageMarker2;
+	}
 }
 
 
@@ -624,13 +760,6 @@ class CustomPane extends StackPane {
 		Text textTitle = new Text(title);
 		getChildren().add(textTitle);
 		textTitle.getStyleClass().add("textTitle");
-	}
-}
-
-// customeException
-class InvalidExceptions extends Exception {
-	InvalidExceptions (String username1, String username2, String marker1, String marker2) {
-		
 	}
 }
 

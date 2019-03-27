@@ -8,6 +8,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Pos;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.media.AudioClip;
@@ -57,13 +58,39 @@ public class Square extends BorderPane{
 	public void setMarker(String marker, boolean isReset) {
 		this.marker = marker;
 
-		this.setCenter(new Text(marker));
-		if (isReset) {
-			isMarked = false;
-		}
-		else {
+		if (!isReset) {
 			isMarked = true;
-		}
+			// display a text when computer moves
+			if (MainView.getIsAIMove()) {
+				this.setCenter(new Text(marker));
+			}
+			// display a text when a human with text marker moves
+			else if (!MainView.getIsAIMove()) {
+				//System.out.println("currentPlayerID:  " + currentPlayerID);
+				
+				// check if the human has a text marker
+				if (currentPlayerID == 1 && !MainView.getIsImageMarker1()) {
+					this.setCenter(new Text(marker));
+				}
+				else if (currentPlayerID == 2 && !MainView.getIsImageMarker2()) {
+					this.setCenter(new Text(marker));
+				}
+				else if (currentPlayerID == 1 && MainView.getIsImageMarker1()) {
+					this.setCenter(new ImageView(Paths.get("src/" + marker).toUri().toString()));
+				}
+				else if (currentPlayerID == 2 && MainView.getIsImageMarker2()) {
+					this.setCenter(new ImageView(Paths.get("src/" + marker).toUri().toString()));
+				}
+				
+			} // end of human moves display marker
+			
+			
+		} // end of !isReset
+		else {
+			isMarked = false;
+			this.setCenter(new Text(marker));
+		} // end of isReset
+		
 		
 	}
 	
@@ -143,13 +170,13 @@ public class Square extends BorderPane{
 				
 				setMarker(currentMarker, false);
 				int gameState = MainView.ticTacToe.determineWinner();
-				System.out.println(timerSquare + "   human player");
+				//System.out.println(timerSquare + "   human player");
 				// check game status
 				if (gameState != 0) {
 					
 					if (timerSquare != null ) {
 						timerSquare.stop();
-						System.out.println(timerSquare +" stops after human plays");
+						//System.out.println(timerSquare +" stops after human plays");
 					}
 						
 					checkGameIsOver(gameState);
@@ -266,7 +293,7 @@ public class Square extends BorderPane{
 			computerRow = rand.nextInt(3); 
 			computerCol = rand.nextInt(3);
 		}
-	
+			MainView.setIsAIMove(true);
 			BasicGameBoard.basicTwoD[computerRow][computerCol].setMarker(computerMarker, false);
 
 		// newly add
