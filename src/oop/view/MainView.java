@@ -1,5 +1,6 @@
 package oop.view;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -13,10 +14,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -159,7 +162,7 @@ public class MainView {
 		
 		// add a textField for timeoutLabel
 		TextField fieldTimeOut = new TextField();
-		fieldTimeOut.setPrefColumnCount(6);
+		fieldTimeOut.setPrefColumnCount(4);
 		
 		gridPaneForInfo.add(fieldTimeOut, 1, 0);
 		vBoxForButtons.getChildren().add(0, gridPaneForInfo);
@@ -197,6 +200,14 @@ public class MainView {
 			
 			Label humanPlayerMarkerLabel = new Label ("Put your marker: ");
 			gridPaneForInfo.add(humanPlayerMarkerLabel, 0, 2);
+			
+			
+			
+			
+			
+			
+			
+			
 		} 
 		// when we have two players
 		else {
@@ -229,13 +240,98 @@ public class MainView {
 		// add a textField for player1 marker
 		fieldMarker1 = new TextField();
 		
-		// add them to field
-		gridPaneForInfo.add(fieldMarker1, 1, 2);
+		
+		
+		
+		// add radio buttons
+
+		RadioButton enterMarkerButton = new RadioButton("Enter a string");
+		RadioButton chooseImageButton = new RadioButton("Choose an image");
+		
+		// group the buttons together
+		ToggleGroup radioButtonsGroup = new ToggleGroup();
+		enterMarkerButton.setToggleGroup(radioButtonsGroup);
+		chooseImageButton.setToggleGroup(radioButtonsGroup);
+					
+		
+		gridPaneForInfo.add(enterMarkerButton, 1, 2);
+		gridPaneForInfo.add(chooseImageButton, 2, 2);
+		
+		enterMarkerButton.setSelected(true);
+		gridPaneForInfo.add(fieldMarker1, 1, 3);
+		
+		
+		// create rbUS
+		RadioButton rbUS = new RadioButton("US");
+		rbUS.setGraphic(new ImageView(Paths.get("src/us.png").toUri().toString()));
+		rbUS.setContentDisplay(ContentDisplay.LEFT);
+		rbUS.setSelected(true);
+		
+		// create rbCN
+		RadioButton rbCN = new RadioButton("China");
+		rbCN.setGraphic(new ImageView(Paths.get("src/cn.png").toUri().toString()));
+		rbCN.setContentDisplay(ContentDisplay.LEFT);
+		
+		// create rbGB
+		RadioButton rbGB = new RadioButton("United Kingdom");
+		rbGB.setGraphic(new ImageView(Paths.get("src/gb.png").toUri().toString()));
+		rbGB.setContentDisplay(ContentDisplay.LEFT);
+	
+		// group the buttons together
+		ToggleGroup radioButtonsImageGroup = new ToggleGroup();
+		rbUS.setToggleGroup(radioButtonsImageGroup);
+		rbCN.setToggleGroup(radioButtonsImageGroup);
+		rbGB.setToggleGroup(radioButtonsImageGroup);
+		
+		enterMarkerButton.setOnAction(e -> {
+			if (enterMarkerButton.isSelected()) {
+				// add text field
+				if (!gridPaneForInfo.getChildren().contains(fieldMarker1)) {
+					gridPaneForInfo.add(fieldMarker1, 1, 3);
+				}
+				
+				// remove image buttons
+				if (gridPaneForInfo.getChildren().contains(rbUS)) {
+					gridPaneForInfo.getChildren().remove(rbUS);
+				}
+				if (gridPaneForInfo.getChildren().contains(rbCN)) {
+					gridPaneForInfo.getChildren().remove(rbCN);
+				}
+				if (gridPaneForInfo.getChildren().contains(rbGB)) {
+					gridPaneForInfo.getChildren().remove(rbGB);
+				}
+			} // end of enterMarkerButton is selected
+		});
+		
+		
+		chooseImageButton.setOnAction(e -> {
+			if (chooseImageButton.isSelected()) {
+				// remove text field
+				if (gridPaneForInfo.getChildren().contains(fieldMarker1)) {
+					gridPaneForInfo.getChildren().remove(fieldMarker1);
+				}			
+
+				
+				// add image radio buttons
+				if (!gridPaneForInfo.getChildren().contains(rbUS)) {
+					gridPaneForInfo.add(rbUS, 1, 3);
+				}
+				if (!gridPaneForInfo.getChildren().contains(rbCN)) {
+					gridPaneForInfo.add(rbCN, 2, 3);
+				}
+				if (!gridPaneForInfo.getChildren().contains(rbGB)) {
+					gridPaneForInfo.add(rbGB, 3, 3);
+				}
+				
+			} // end of if ImageButton is selected
+		});
+		
 		
 		if (numPlayer == 2) {
 			// add marker2 to field
 			gridPaneForInfo.add(fieldMarker2, 1, 4); 
 		}
+		
 		
 		
 		//quit the game if "quit" is clicked
