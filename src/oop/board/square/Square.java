@@ -2,7 +2,7 @@ package oop.board.square;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.Random;
 
 import javafx.animation.Animation;
@@ -27,11 +27,11 @@ public class Square extends BorderPane{
 	private boolean isMarked = false;
 	// create a HBox
 	public static HBox hBox = new HBox(20);
-	private Timeline timerSquare;
+	
 	private String computerMarker;
 	private int currentPlayerID;
 	
-	private boolean firstTime = true;
+
 	
 	private ArrayList<Timeline> timerLists = new ArrayList<>();
 	
@@ -61,8 +61,11 @@ public class Square extends BorderPane{
 
 		if (!isReset) {
 			isMarked = true;
+			//System.out.println("computer marker outside: " + marker);
+			//System.out.println("computer move: " + MainView.getIsAIMove());
 			// display a text when computer moves
 			if (MainView.getIsAIMove()) {
+				//System.out.println("computer marker: " + marker);
 				this.setCenter(new Text(marker));
 			}
 			// display a text when a human with text marker moves
@@ -106,6 +109,7 @@ public class Square extends BorderPane{
 		MainView.setIsAIMove(false);
 
 		if (MainView.ticTacToe.getGameState() == 0) {
+			// get currentPlayerID
 			currentPlayerID = MainView.ticTacToe.getPlayerID();
 			String currentMarker = MainView.ticTacToe.player.get(currentPlayerID -1).getMarker();
 			computerMarker = "X";
@@ -123,50 +127,7 @@ public class Square extends BorderPane{
 				if (MainView.getTimeout() > 0) {
 					MainView.timer.stop();
 				}		
-					// add a timer for humans					
-					// it is human's turn
-					//System.out.println( "human id: " + MainView.getHumanPlyaerID());
-					//System.out.println( "current id: " + currentPlayerID);
-					//if (MainView.ticTacToe.getNumberPlayers() == 2 || (MainView.ticTacToe.getNumberPlayers() == 1 && currentPlayerID == MainView.getHumanPlyaerID())) {
-						//timerSquare  = new Timeline(new KeyFrame(Duration.millis(MainView.getTimeout()*1000), e-> {
-							//timerSquare.stop();
-
-							//System.out.println( "current id: " + currentPlayerID);
-							// if computer is the next player, generate moves
-							//if (MainView.ticTacToe.getNumberPlayers() == 1 && currentPlayerID == 3-MainView.getHumanPlyaerID()) {
-								// newly add
-								//timerSquare.stop();
-								// computer makes move and check game results
-							//	AI_Move_CheckWin();
-							//	MainView.setIsAIMove(true);
-								
-								
-								
-							//}
-							
-							
-							// determine winner no matter who is playing
-							// if game state is 0, restart the timer
-							//if (MainView.ticTacToe.getGameState() == 0) {
-								//timerSquare.play();
-								// add a timer here
-								
-								
-								
-							//}
-						//	else {
-								// otherwise, stop the timer
-								//timerSquare.stop();
-								
-							//}
-							
-						//}));
-						
-						// start the animation
-						//timerSquare.play();
-				//} // end of test if it is human's turn
-			//} // end of timeout > 0
-				
+					// just removed old codes for timer
 				
 				
 				setMarker(currentMarker, false);
@@ -174,9 +135,9 @@ public class Square extends BorderPane{
 				//System.out.println(timerSquare + "   human player");
 				// check game status
 				if (gameState != 0) {
-					
-					if (timerSquare != null ) {
-						timerSquare.stop();
+					// stop the timer when the game is over
+					if (MainView.timerSquare != null ) {
+						MainView.timerSquare.stop();
 						//System.out.println(timerSquare +" stops after human plays");
 					}
 						
@@ -204,71 +165,66 @@ public class Square extends BorderPane{
 						
 						//add a timer
 //						// add timeout
-//						if (MainView.getTimeout() > 0) {
-//							if (MainView.ticTacToe.getGameState() == 0) {
-//
-//							// start the timer, when time is up, change playerID and restart animation
-//							// when a valid move is made, change playerID and restart animation
-//							
-//								if (timerSquare != null) {
-//									timerSquare.stop();
-//									System.out.println(timerSquare +" stops after computer plays");
-//								}
-//								
-//								
-//								firstTime = false;
-//								timerSquare = new Timeline(new KeyFrame(Duration.millis(MainView.getTimeout()*1000), e-> {
-//								timerLists.add(timerSquare);
-//								System.out.println(timerSquare +" starts");
-//									// when the timer is called, the previous player does not make a move, so we need to change the player ID here
-//									currentPlayerID = MainView.ticTacToe.setCurrentPlayer(currentPlayerID);
-//									// show whose turn now
-//									MainView.turnLabel.setText(MainView.ticTacToe.player.get(currentPlayerID-1).getUsername() + "'s turn to play.");
-//									// computer makes a move (If a human moves, then this timer would not be called)
-//									// generate row & column, call updatePlayerMove
-//									if (MainView.ticTacToe.getNumberPlayers() == 1) {
-//										if (MainView.ticTacToe.getGameState() == 0) {
-//											AI_Move_CheckWin();
-//										}
-//										MainView.setIsAIMove(true);
-//										// when the game is over
-//										if (MainView.ticTacToe.getGameState() != 0) {
-//											// stop the timer when game is over
-//											if (timerSquare != null) {
-//												timerSquare.stop();
-//	
-//											}
-//											// show the human lost the game
-//											MainView.turnLabel.setText(MainView.ticTacToe.player.get(MainView.getHumanPlyaerID()-1).getUsername() + " lost the game.");
-//											// show the two buttons (play again and quit)
-//											Square.hBox.setAlignment(Pos.CENTER);
-//											if (!MainView.vBoxForGame.getChildren().contains(hBox)) {
-//												MainView.vBoxForGame.getChildren().add(Square.hBox);
-//											}
-//										} // end of game over
-//										
-//		
-//									} // end of numPlayer == 1
-//									
-//									// show whose turn now
-//									if (MainView.ticTacToe.getGameState() == 0) {
-//										timerSquare.stop();
-//										timerSquare.play();
-//										MainView.turnLabel.setText(MainView.ticTacToe.player.get(currentPlayerID-1).getUsername() + "'s turn to play.");
-//									}
-//								
-//								}));
-//						
-//								timerSquare.play();
-//							
-//							if (MainView.ticTacToe.getGameState() == 0) {
-//								timerSquare.setCycleCount(9);
-//								timerSquare.play();
-//							}
-//								
-//							}
-//						} // end of timeout
-//						
+						if (MainView.getTimeout() > 0) {
+							if (MainView.ticTacToe.getGameState() == 0) {
+
+							// start the timer, when time is up, change playerID and restart animation
+							// when a valid move is made, change playerID and restart animation
+							
+								if (MainView.timerSquare != null) {
+									MainView.timerSquare.stop();
+									System.out.println(MainView.timerSquare +" stops after computer plays");
+								}
+								
+
+								MainView.timerSquare = new Timeline(new KeyFrame(Duration.millis(MainView.getTimeout()*1000), e-> {
+								timerLists.add(MainView.timerSquare);
+								System.out.println(MainView.timerSquare +" starts");
+									// when the timer is called, the previous player does not make a move, so we need to change the player ID here
+									currentPlayerID = MainView.ticTacToe.setCurrentPlayer(currentPlayerID);
+									// show whose turn now
+									MainView.turnLabel.setText(MainView.ticTacToe.player.get(currentPlayerID-1).getUsername() + "'s turn to play.");
+									// computer makes a move (If a human moves, then this timer would not be called)
+									// generate row & column, call updatePlayerMove
+									if (MainView.ticTacToe.getNumberPlayers() == 1) {
+										if (MainView.ticTacToe.getGameState() == 0) {
+											AI_Move_CheckWin();
+										}
+										MainView.setIsAIMove(true);
+										// when the game is over
+										if (MainView.ticTacToe.getGameState() != 0) {
+											// stop the timer when game is over
+											if (MainView.timerSquare != null) {
+												MainView.timerSquare.stop();
+	
+											}
+											// show the human lost the game
+											MainView.turnLabel.setText(MainView.ticTacToe.player.get(MainView.getHumanPlyaerID()-1).getUsername() + " lost the game.");
+											// show the two buttons (play again and quit)
+											Square.hBox.setAlignment(Pos.CENTER);
+											if (!MainView.vBoxForGame.getChildren().contains(hBox)) {
+												MainView.vBoxForGame.getChildren().add(Square.hBox);
+											}
+										} // end of game over
+										
+		
+									} // end of numPlayer == 1
+									
+									// show whose turn now
+									if (MainView.ticTacToe.getGameState() == 0) {
+										MainView.timerSquare.stop();
+										MainView.timerSquare.play();
+										MainView.turnLabel.setText(MainView.ticTacToe.player.get(currentPlayerID-1).getUsername() + "'s turn to play.");
+									}
+								
+								}));
+								MainView.timerSquare.setCycleCount(9);
+								MainView.timerSquare.play();
+							
+								
+							}
+						} // end of timeout
+						
 						
 						
 						
@@ -305,9 +261,9 @@ public class Square extends BorderPane{
 		if (gameState1 != 0) {
 
 			if (MainView.getTimeout() > 0) {
-				if (timerSquare != null) {
-					System.out.println(timerSquare + "stops");					
-					timerSquare.stop();
+				if (MainView.timerSquare != null) {
+					System.out.println(MainView.timerSquare + "stops");					
+					MainView.timerSquare.stop();
 
 					//clearTimer();
 				}

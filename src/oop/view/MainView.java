@@ -72,8 +72,7 @@ public class MainView {
     private static boolean isImageMarker2 = false;
     
     private String username1, username2, marker1, marker2;
-    private String oldMarker1;
-    
+    public static Timeline timerSquare;
     public static Button quitBtn;
     private ArrayList<String> userInfoArrayList = new ArrayList<String>();
     //public static Timeline timerSquare;
@@ -679,7 +678,7 @@ if (numPlayer == 2) {
 			}
 			
 			// user names and markers cannot be empty
-			if  ( (marker1.trim().length() == 0 && !isImageMarker1 && !chooseUsernameButton.isSelected())  ||( marker2.trim().length() == 0) && !isImageMarker2 && !chooseUsernameButton2.isSelected()) {
+			if  ( (marker1.trim().length() == 0 && !isImageMarker1 && !chooseUsernameButton.isSelected())  ||( numPlayer == 2 && marker2.trim().length() == 0) && !isImageMarker2 && !chooseUsernameButton2.isSelected()) {
 				emptyErrors = true;
 				
 				
@@ -882,8 +881,9 @@ if (numPlayer == 2) {
 				// computer makes a move (If a human moves, then this timer would not be called)
 				// generate row & column, call updatePlayerMove
 				if (numPlayer == 1) {
-					AIMove();
 					isAIMove = true;
+					AIMove();
+					
 					// when the game is over
 					if (ticTacToe.getGameState() != 0) {
 						// stop the timer when game is over
@@ -971,7 +971,7 @@ if (numPlayer == 2) {
 			computerRow = rand.nextInt(3); 
 			computerCol = rand.nextInt(3);
 		}
-	
+		//System.out.println("computer marker in MainView: " + marker.get(1));
 		BasicGameBoard.basicTwoD[computerRow][computerCol].setMarker(marker.get(2-humanPlayerID), false);
 	}
 	
@@ -1005,7 +1005,6 @@ if (numPlayer == 2) {
 //	         System.out.print("key: "+ mentry.getKey() + " & Value: ");
 //	         System.out.println(mentry.getValue());
 	         
-	         oldMarker1 = ((Player) mentry.getValue()).getMarker();
 	         // store info into the array list
 	         userInfoArrayList.add(((Player) mentry.getValue()).getUsername()  + " (" + ((Player) mentry.getValue()).getMarker() + ") Win-Lose: " 
 	         + ((Player) mentry.getValue()).getWin() + "-"+ ((Player) mentry.getValue()).getLose());
