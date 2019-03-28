@@ -74,7 +74,7 @@ public class MainView {
     private String username1, username2, marker1, marker2;
     private String oldMarker1;
     
-    public static final String MEDIA_URL_WIN = "src/winSound.mp3";
+    public static Button quitBtn;
     private ArrayList<String> userInfoArrayList = new ArrayList<String>();
     //public static Timeline timerSquare;
     
@@ -311,6 +311,7 @@ public class MainView {
                         String new_val) -> {
                         	// set the user name (before empty space)
                         	username1 = new_val.substring(0, new_val.indexOf(" ")); 
+                        	marker1 = new_val.substring(new_val.indexOf("(") + 1, new_val.indexOf(")"));
 		});
 	
 		
@@ -324,6 +325,7 @@ public class MainView {
 	                        String new_val) -> {
 	                        	// set the user name (before empty space)
 	                        	username2 = new_val.substring(0, new_val.indexOf(" ")); 
+	                        	marker2 = new_val.substring(new_val.indexOf("(") + 1, new_val.indexOf(")"));
 			});
 
 		
@@ -601,14 +603,16 @@ if (numPlayer == 2) {
 		try {
 			if (!chooseUsernameButton.isSelected()) {
 				username1 = fieldUsername1.getText();
+				marker1 = fieldMarker1.getText();
 			}
 			
-			marker1 = fieldMarker1.getText();
+			
 			if (!chooseUsernameButton2.isSelected()) {
 				username2 = fieldUsername2.getText();
+				marker2 = fieldMarker2.getText();
 			}
 			
-			marker2 = fieldMarker2.getText();
+			
 			
 			// if an image is selected for player1
 			if (chooseImageButton.isSelected()) {
@@ -675,21 +679,33 @@ if (numPlayer == 2) {
 			}
 			
 			// user names and markers cannot be empty
-			if  (username1.trim().length() == 0 || (marker1.trim().length() == 0 && !isImageMarker1) || ( numPlayer == 2 && (username2.trim().length() == 0 ||( marker2.trim().length() == 0) && !isImageMarker2))) {
-				if (!chooseUsernameButton.isSelected()) {
+			if  ( (marker1.trim().length() == 0 && !isImageMarker1 && !chooseUsernameButton.isSelected())  ||( marker2.trim().length() == 0) && !isImageMarker2 && !chooseUsernameButton2.isSelected()) {
+				emptyErrors = true;
+				
+				
+			} // end of emptyErrors
+			else {
+				if (username1.trim().length() == 0 && !chooseUsernameButton.isSelected()) {
+					//System.out.println("emptyError1: " + emptyErrors);
 					emptyErrors = true;				
 				}
-				if (numPlayer == 2 && !chooseUsernameButton2.isSelected()) {
+				if (numPlayer == 2 && !chooseUsernameButton2.isSelected() && username2.trim().length() == 0 ) {
+					//System.out.println("emptyError2: " + emptyErrors);
 					emptyErrors = true;
 				}
-				if (emptyErrors) {
-					gridPaneForInfo.add(emptyInputsText, 0, 7);
-				}
-				
 			}
+			
+			if (emptyErrors) {
+				gridPaneForInfo.add(emptyInputsText, 0, 7);
+			}
+			
 			
 			if (numPlayer == 1 && duplicateErrors1) {
 				gridPaneForInfo.add(duplicateInputsText1, 0, 8);
+			}
+			
+			if (numPlayer == 2 && duplicateErrors1) {
+				gridPaneForInfo.add(duplicateInputsText1, 0, 9);
 			}
 			// user names and markers cannot be the same
 			if (numPlayer == 2) {
@@ -710,12 +726,15 @@ if (numPlayer == 2) {
 						
 					}
 					
-				}
+				} // end of duplicateErrors
 			} // end of numPlayer == 2
 			
 			//System.out.println("empty errors: " + emptyErrors + " duplicateErrors: " + duplicateErrors);
 			
-			timeout =Integer.parseInt(fieldTimeOut.getText());		
+//			System.out.println(emptyErrors + " " + duplicateErrors + "  " + duplicateErrors1);
+			
+			timeout =Integer.parseInt(fieldTimeOut.getText());
+			System.out.println(username1);
 			if (!duplicateErrors && !emptyErrors && !duplicateErrors1) {
 				// one player, she/he goes first
 				if (numPlayer == 1) {
@@ -767,7 +786,6 @@ if (numPlayer == 2) {
 						// if we choose a user name, use the original player object				
 						if (chooseUsernameButton.isSelected()) {
 							ticTacToe.player.add(0,ticTacToe.getHashMap().get(username1));
-							System.out.println(ticTacToe.getHashMap().get(username1));
 						}
 						else {
 							ticTacToe.createPlayer(username.get(humanPlayerID-1), marker.get(humanPlayerID-1), humanPlayerID);	
@@ -837,16 +855,18 @@ if (numPlayer == 2) {
 					
 		// show whose turn now
 		turnLabel = new Label (username.get(ticTacToe.getPlayerID()-1) + "'s turn to play.");
-		//Button quitBtn = new Button ("Quit the game");
+		 quitBtn = new Button ("Quit the game");
 		
-		vBoxForGame.getChildren().addAll(turnLabel);
+		vBoxForGame.getChildren().addAll(turnLabel, quitBtn);
+		
+		
 		vBoxForGame.setAlignment(Pos.CENTER);
-//		
-//		quitBtn.setOnAction(e -> {
-//			ticTacToe.saveInfo();
-//			System.exit(0);
-//		});
-//		
+		
+		quitBtn.setOnAction(e -> {
+			ticTacToe.saveInfo();
+			System.exit(0);
+		});
+		
 		
 		
 		

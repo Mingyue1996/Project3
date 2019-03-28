@@ -346,8 +346,23 @@ public class Square extends BorderPane{
 					MainView.ticTacToe.player.get(0).setLose();
 					MainView.ticTacToe.getHashMap().put(MainView.ticTacToe.player.get(0).getUsername(), MainView.ticTacToe.player.get(0));
 				}
-			}
-		}
+			} // end of update user info in hash map for one player
+			else {
+				if (gameState == 1) {
+					MainView.ticTacToe.player.get(0).setWin();
+					MainView.ticTacToe.getHashMap().put(MainView.ticTacToe.player.get(0).getUsername(), MainView.ticTacToe.player.get(0));
+					
+					MainView.ticTacToe.player.get(1).setLose();
+					MainView.ticTacToe.getHashMap().put(MainView.ticTacToe.player.get(1).getUsername(), MainView.ticTacToe.player.get(1));
+				}else {
+					MainView.ticTacToe.player.get(1).setWin();
+					MainView.ticTacToe.getHashMap().put(MainView.ticTacToe.player.get(1).getUsername(), MainView.ticTacToe.player.get(1));
+					
+					MainView.ticTacToe.player.get(0).setLose();
+					MainView.ticTacToe.getHashMap().put(MainView.ticTacToe.player.get(0).getUsername(), MainView.ticTacToe.player.get(0));
+				}
+			}// end of update user info in hash map for two players
+		} // end of win/loss
 		// there is a tie
 		else if (gameState == 3) {
 			MainView.turnLabel.setText("There is a tie.");
@@ -355,6 +370,10 @@ public class Square extends BorderPane{
 		hBox.setAlignment(Pos.CENTER);
 		if (!MainView.vBoxForGame.getChildren().contains(hBox)) {
 			MainView.vBoxForGame.getChildren().add(hBox);
+		}
+		
+		if (MainView.vBoxForGame.getChildren().contains(MainView.quitBtn)) {
+			MainView.vBoxForGame.getChildren().remove(MainView.quitBtn);
 		}
 		
 	} // end of checkGameIsOver
