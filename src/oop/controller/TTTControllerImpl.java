@@ -5,11 +5,17 @@ import oop.player.HumanPlayer;
 import oop.player.Player;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javafx.scene.layout.Pane;
 public class TTTControllerImpl implements TTTControllerInterface {
+	
 	
 	private int numberPlayer = 0;
 	private int timeout = 0;
@@ -23,6 +29,14 @@ public class TTTControllerImpl implements TTTControllerInterface {
 	private boolean isHumanPlayer = true;
 	private boolean isLastMoveValid = true;
 	public ArrayList<Player> player = new ArrayList<>();
+	private HashMap<String, Player> userInfo = new HashMap<String, Player>();
+	
+	
+	// constructor
+	public TTTControllerImpl () {
+		retrieveUserInfo();
+	}
+	
 	/**
 	 * Initialize or reset game board. Set each entry back to a default value.
 	 * 
@@ -288,4 +302,62 @@ public class TTTControllerImpl implements TTTControllerInterface {
 			}
 		} // end of in.ready()
 	} // end of getRowCol
+	
+	// save user info including user names, markers, and win/loses
+	public void saveInfo () {
+		// add user info to hash map
+		for (int i = 0; i< player.size(); i++) {
+			// ignore Computer
+			if (!player.get(i).getUsername().equals("Computer")) {
+				userInfo.put(player.get(i).getUsername(), player.get(i));
+			}
+			
+		} // end of for loop
+		
+		 try
+         {
+                FileOutputStream fos = new FileOutputStream("userInfo.ser");
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(userInfo);
+                oos.close();
+                fos.close();
+                System.out.printf("Serialized HashMap data is saved in userinfo.ser");
+         }catch(IOException ioe)
+          {
+                ioe.printStackTrace();
+          }
+		
+		// check whether the user name(key) already exists
+		
+		
+	} // end of saveInfo
+	
+	// retrieve user info
+
+	public void retrieveUserInfo () {
+		try
+	      {
+	         FileInputStream fis = new FileInputStream("userinfo.ser");
+	         ObjectInputStream ois = new ObjectInputStream(fis);
+	         userInfo = (HashMap) ois.readObject();
+	         ois.close();
+	         fis.close();
+	      }catch(IOException ioe)
+	      {
+	         ioe.printStackTrace();
+	         return;
+	      }catch(ClassNotFoundException c)
+	      {
+	         System.out.println("Class not found. Please check again.");
+	         c.printStackTrace();
+	         return;
+	      }
+	      System.out.println("Deserialized HashMap..");
+	      // Display content using Iterator
+	} // end of retrieve user info
+	
+	public HashMap<String, Player> getHashMap () {
+		return userInfo;
+	}
+	
 }

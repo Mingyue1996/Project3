@@ -122,14 +122,7 @@ public class BasicGameBoard {
 		}
 		else {
 			marker2 = marker;
-			
-			// compare which marker contains more characters
-			if (marker1.length() >= marker2.length()) {
-				boardFormat = 2 + marker1.length();
-			}
-			else {
-				boardFormat = 2 + marker2.length();
-			}
+
 		}
 	} // end of setMarker
 	

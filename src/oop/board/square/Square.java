@@ -2,6 +2,7 @@ package oop.board.square;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import javafx.animation.Animation;
@@ -335,12 +336,17 @@ public class Square extends BorderPane{
 			}
 			
 	
-			//AudioClip plonkSound = new AudioClip("https://vocaroo.com/i/s1Ho8LVVYJRD");
-			 //plonkSound.play();
-			
-
-			 //AudioClip plonkSound = new AudioClip("http://www.mario-museum.net/sons/smb2_roulette-victoire.wav");
-			// plonkSound.play();
+			// update user info in hash map
+			if (MainView.ticTacToe.getNumberPlayers() == 1 ) {
+				if (gameState == 1) {
+					MainView.ticTacToe.player.get(0).setWin();
+					MainView.ticTacToe.getHashMap().put(MainView.ticTacToe.player.get(0).getUsername(), MainView.ticTacToe.player.get(0));
+				}
+				else {
+					MainView.ticTacToe.player.get(0).setLose();
+					MainView.ticTacToe.getHashMap().put(MainView.ticTacToe.player.get(0).getUsername(), MainView.ticTacToe.player.get(0));
+				}
+			}
 		}
 		// there is a tie
 		else if (gameState == 3) {
@@ -367,4 +373,7 @@ public class Square extends BorderPane{
 		mediaPlayer.setAutoPlay(true);
 		mediaPlayer.play();
 	} // end of playSound()
+	
+	
+
 } // end of Square class
