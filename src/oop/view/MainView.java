@@ -100,7 +100,7 @@ public class MainView {
 		marker.clear();
 		isImageMarker1 = false;
 		isImageMarker2 = false;
-		
+		isAIMove = false;
 	}
 	
 	

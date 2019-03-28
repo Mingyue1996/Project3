@@ -155,7 +155,39 @@ public class Square extends BorderPane{
 					// newly remove
 					//currentPlayerID = MainView.ticTacToe.setCurrentPlayer(currentPlayerID);
 					MainView.turnLabel.setText(MainView.ticTacToe.player.get(currentPlayerID -1).getUsername() + "'s turn to play.");
-
+					
+					
+					// if we have two players
+					if (MainView.ticTacToe.getNumberPlayers() == 2 ) {
+						
+						// if we have a timeout
+						if (MainView.getTimeout() > 0) {
+							if (MainView.ticTacToe.getGameState() == 0) {
+								// always stop a previous timer
+								if (MainView.timerSquare != null) {
+									MainView.timerSquare.stop();
+								} // stop MainView.timerSquare
+								
+								MainView.timerSquare = new Timeline(new KeyFrame(Duration.millis(MainView.getTimeout()*1000), e-> {
+									// when the timer is called, the previous player does not make a move, so we need to change the player ID here
+									currentPlayerID = MainView.ticTacToe.setCurrentPlayer(currentPlayerID);
+									
+									// show whose turn now
+									MainView.turnLabel.setText(MainView.ticTacToe.player.get(currentPlayerID-1).getUsername() + "'s turn to play.");
+									
+									MainView.setIsAIMove(false);
+									
+								}));
+								MainView.timerSquare.setCycleCount(Timeline.INDEFINITE);
+								MainView.timerSquare.play();
+							} // end of game is going in two players
+						} // end of we have a timeout two players
+						
+						
+					} // end of "if we have two players"
+					
+					
+					
 					// check if it is computer's turn. If it is, generate moves 
 					//System.out.println("currentID when going on: " + currentPlayerID);
 					if (MainView.ticTacToe.getNumberPlayers() == 1 && currentPlayerID == 3-MainView.getHumanPlyaerID()) {
