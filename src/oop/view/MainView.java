@@ -250,7 +250,7 @@ public class MainView {
 		    gridPaneForInfo.add(player2MarkerLabel, 0, 5);
 			
 			// add them to field
-			gridPaneForInfo.add(fieldUsername2, 1, 4);
+			gridPaneForInfo.add(fieldUsername2, 3, 4);
 		} // end of two users
 		
 		// add a textField for player1 user name
@@ -278,8 +278,30 @@ public class MainView {
 		
 		enterUsernameButton.setSelected(true);
 		
+		
+		//add radio butters for user 2 to select an old user name
+		RadioButton enterUsernameButton2 = new RadioButton("Enter a user name");
+		RadioButton chooseUsernameButton2 = new RadioButton("Choose a previous user name");
+		
+		// group the buttons together
+		ToggleGroup radioButtonsUsernameGroup2 = new ToggleGroup();
+		enterUsernameButton2.setToggleGroup(radioButtonsUsernameGroup2);
+		chooseUsernameButton2.setToggleGroup(radioButtonsUsernameGroup2);
+					
+		if (numPlayer == 2) {
+			gridPaneForInfo.add(enterUsernameButton2, 1, 4);
+			gridPaneForInfo.add(chooseUsernameButton2, 2, 4);
+			
+			enterUsernameButton2.setSelected(true);
+			
+		}
+		
+		
+		
+		
+		
 		displayInfo();
-		// newly added create a list view for old users  ?? 
+		// newly added create a list view for old users  for player 1
 		ListView<String> lvUsername = new ListView<> (FXCollections.observableArrayList(userInfoArrayList)); // userInfoArrayList
 		
 		// check whether it is an old user name or not (whether radio button is selected)
@@ -292,6 +314,18 @@ public class MainView {
 		});
 	
 		
+			// newly added create a list view for old users  for player 1
+			ListView<String> lvUsername2 = new ListView<> (FXCollections.observableArrayList(userInfoArrayList)); // userInfoArrayList
+			
+			// check whether it is an old user name or not (whether radio button is selected)
+			// old user name, get the user name 
+			lvUsername2.getSelectionModel().selectedItemProperty().addListener(
+	                (ObservableValue<? extends String> ov, String old_val,
+	                        String new_val) -> {
+	                        	// set the user name (before empty space)
+	                        	username2 = new_val.substring(0, new_val.indexOf(" ")); 
+			});
+
 		
 		
 		// add a textField for player1 marker
@@ -427,8 +461,43 @@ if (numPlayer == 2) {
 
 			
 			
+			// user name for player 2
+			enterUsernameButton2.setOnAction(e -> {
+				if (enterUsernameButton2.isSelected()) {
+					// add text field
+					if (!gridPaneForInfo.getChildren().contains(fieldUsername2)) {
+						gridPaneForInfo.add(fieldUsername2, 3,4);
+					}
+				
+					// remove list view
+					if (root.getChildren().contains(lvUsername)) {
+						root.getChildren().remove(lvUsername);
+					}
+				} // end of enterUsernameButton is selected
+			}); // end of enterUsernameButton
 
 
+			
+			// newly added chooseUsernameButton2
+			chooseUsernameButton2.setOnAction(e -> {
+				if (chooseUsernameButton2.isSelected()) {
+				
+					// add list view
+					if (!root.getChildren().contains(lvUsername2)) {
+						root.setLeft(lvUsername2);
+					}
+					
+					// remove input field
+					if (gridPaneForInfo.getChildren().contains(fieldUsername2)) {
+						gridPaneForInfo.getChildren().remove(fieldUsername2);
+					}
+				
+				} // end of enterUsernameButton is selected
+			}); // end of enterUsernameButton
+
+			
+			
+			
 
 		
 		enterMarkerButton.setOnAction(e -> {
@@ -535,7 +604,10 @@ if (numPlayer == 2) {
 			}
 			
 			marker1 = fieldMarker1.getText();
-			username2 = fieldUsername2.getText();
+			if (!chooseUsernameButton2.isSelected()) {
+				username2 = fieldUsername2.getText();
+			}
+			
 			marker2 = fieldMarker2.getText();
 			
 			// if an image is selected for player1
@@ -595,13 +667,22 @@ if (numPlayer == 2) {
 			}
 			
 			// user name cannot be found in the list
-			if (numPlayer == 1 && ticTacToe.getHashMap().containsKey(username1) && !chooseUsernameButton.isSelected()) {
+			if ( ticTacToe.getHashMap().containsKey(username1) && !chooseUsernameButton.isSelected()) {
 				duplicateErrors1 = true;
 			}		
+			if (numPlayer == 2 && ticTacToe.getHashMap().containsKey(username2) && !chooseUsernameButton2.isSelected()) {
+				duplicateErrors1 = true;
+			}
+			
 			// user names and markers cannot be empty
 			if  (username1.trim().length() == 0 || (marker1.trim().length() == 0 && !isImageMarker1) || ( numPlayer == 2 && (username2.trim().length() == 0 ||( marker2.trim().length() == 0) && !isImageMarker2))) {
 				if (!chooseUsernameButton.isSelected()) {
+					emptyErrors = true;				
+				}
+				if (numPlayer == 2 && !chooseUsernameButton2.isSelected()) {
 					emptyErrors = true;
+				}
+				if (emptyErrors) {
 					gridPaneForInfo.add(emptyInputsText, 0, 7);
 				}
 				
