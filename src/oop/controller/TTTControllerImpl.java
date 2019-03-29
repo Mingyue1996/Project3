@@ -321,7 +321,7 @@ public class TTTControllerImpl implements TTTControllerInterface {
                 oos.writeObject(userInfo);
                 oos.close();
                 fos.close();
-                System.out.printf("Serialized HashMap data is saved in userinfo.ser");
+               // System.out.printf("Serialized HashMap data is saved in userinfo.ser");
          }catch(IOException ioe)
           {
                 ioe.printStackTrace();
@@ -352,7 +352,7 @@ public class TTTControllerImpl implements TTTControllerInterface {
 	         c.printStackTrace();
 	         return;
 	      }
-	      System.out.println("Deserialized HashMap..");
+	    //  System.out.println("Deserialized HashMap..");
 	      // Display content using Iterator
 	} // end of retrieve user info
 	

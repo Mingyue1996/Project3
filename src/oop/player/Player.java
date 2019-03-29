@@ -16,6 +16,7 @@ public class Player implements Serializable {
 		
 	}
 	
+	
 	// return new row
 	public int getNewMoveRow() {
 		return newMoveRow;
@@ -52,10 +53,7 @@ public class Player implements Serializable {
 		loseNum ++;
 	}
 
-//	public void setMarker(String marker) {
-//		this.marker = marker;
-//		
-//	}
+
 
 
 }

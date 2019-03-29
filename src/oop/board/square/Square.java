@@ -5,20 +5,19 @@ import java.util.ArrayList;
 
 import java.util.Random;
 
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.media.AudioClip;
+
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import oop.board.BasicGameBoard;
-import oop.player.Player;
+
 import oop.view.*;
 
 public class Square extends BorderPane{
@@ -68,7 +67,7 @@ public class Square extends BorderPane{
 				//System.out.println("computer marker: " + marker);
 				this.setCenter(new Text(marker));
 				if (marker.equals("cn.png") || marker.equals("us.png") || marker.equals("gb.png")) {
-					System.out.println(" my marker");
+					//System.out.println(" my marker");
 					
 					this.setCenter(new ImageView(Paths.get("src/" + marker).toUri().toString()));
 				}
@@ -81,13 +80,19 @@ public class Square extends BorderPane{
 				if (currentPlayerID == 1 && !MainView.getIsImageMarker1()) {
 					this.setCenter(new Text(marker));
 					if (marker.equals("cn.png") || marker.equals("us.png") || marker.equals("gb.png")) {
-						System.out.println(" my marker");
+						//System.out.println(" my marker");
 						
 						this.setCenter(new ImageView(Paths.get("src/" + marker).toUri().toString()));
 					}
 				}
 				else if (currentPlayerID == 2 && !MainView.getIsImageMarker2()) {
+					
 					this.setCenter(new Text(marker));
+					if (marker.equals("cn.png") || marker.equals("us.png") || marker.equals("gb.png")) {
+						//System.out.println(" my marker");
+						
+						this.setCenter(new ImageView(Paths.get("src/" + marker).toUri().toString()));
+					}
 				}
 				else if (currentPlayerID == 1 && MainView.getIsImageMarker1()) {
 					this.setCenter(new ImageView(Paths.get("src/" + marker).toUri().toString()));
@@ -268,9 +273,6 @@ public class Square extends BorderPane{
 						} // end of timeout
 						
 						
-						
-						
-						
 					}// end of computer plays
 				
 					
@@ -282,7 +284,7 @@ public class Square extends BorderPane{
 		} // end of gameState == 0
 	} // end of handleMouseClick
 	
-	public void AI_Move_CheckWin() {
+	private void AI_Move_CheckWin() {
 		// generate row & column, call updatePlayerMove
 		Random rand = new Random(); 
 		
@@ -321,7 +323,7 @@ public class Square extends BorderPane{
 	}
 	
 	
-	public void checkGameIsOver(int gameState) {
+	private void checkGameIsOver(int gameState) {
 		// someone won the game
 		if ( gameState == 1 || gameState == 2) {
 			MainView.turnLabel.setText(MainView.ticTacToe.player.get(currentPlayerID-1).getUsername() + " won the game.");
@@ -352,7 +354,7 @@ public class Square extends BorderPane{
 					
 					MainView.ticTacToe.player.get(1).setLose();
 					MainView.ticTacToe.getHashMap().put(MainView.ticTacToe.player.get(1).getUsername(), MainView.ticTacToe.player.get(1));
-				}else {
+				}else if (gameState == 2) {
 					MainView.ticTacToe.player.get(1).setWin();
 					MainView.ticTacToe.getHashMap().put(MainView.ticTacToe.player.get(1).getUsername(), MainView.ticTacToe.player.get(1));
 					
@@ -364,7 +366,15 @@ public class Square extends BorderPane{
 		// there is a tie
 		else if (gameState == 3) {
 			MainView.turnLabel.setText("There is a tie.");
-		}
+			
+			if (MainView.ticTacToe.getNumberPlayers()  == 1) {
+				MainView.ticTacToe.getHashMap().put(MainView.ticTacToe.player.get(0).getUsername(), MainView.ticTacToe.player.get(0));
+			}
+			else {
+				MainView.ticTacToe.getHashMap().put(MainView.ticTacToe.player.get(0).getUsername(), MainView.ticTacToe.player.get(0));
+				MainView.ticTacToe.getHashMap().put(MainView.ticTacToe.player.get(1).getUsername(), MainView.ticTacToe.player.get(1));
+			}
+		} // end of a tie
 		hBox.setAlignment(Pos.CENTER);
 		if (!MainView.vBoxForGame.getChildren().contains(hBox)) {
 			MainView.vBoxForGame.getChildren().add(hBox);
@@ -376,7 +386,7 @@ public class Square extends BorderPane{
 		
 	} // end of checkGameIsOver
 	
-	public void clearTimer () {
+	private void clearTimer () {
 			for (int i = 0; i < timerLists.size(); i++) {
 				timerLists.get(i).stop();
 			}

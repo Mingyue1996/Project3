@@ -6,14 +6,14 @@ import javafx.scene.layout.Pane;
 import oop.board.square.Square;
 
 public class BasicGameBoard {
-	private boolean hasWon = true;
+	//private boolean hasWon = true;
 	public static Square[][] basicTwoD = new Square[3][3];
-	
+	 
 	// create a pane to hold squares
 	GridPane gridPane = new GridPane();
 	
 	private String marker1, marker2;
-	private int boardFormat = 0;
+	//private int boardFormat = 0;
 	// constructor
 	public BasicGameBoard() {
 		int id = 0;

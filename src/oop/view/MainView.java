@@ -31,9 +31,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -51,8 +48,8 @@ public class MainView {
 	private static int timeout = 0;
 	public static Label turnLabel = new Label();
 	
-	ArrayList<String> username = new ArrayList<>();
-	ArrayList<String> marker = new ArrayList<>();
+	private ArrayList<String> username = new ArrayList<>();
+	private ArrayList<String> marker = new ArrayList<>();
 	private static int humanPlayerID = 1;
 	public static Timeline timer;
 	private static boolean isAIMove = false;
@@ -61,9 +58,9 @@ public class MainView {
 	private boolean duplicateErrors = false;
 	private boolean duplicateErrors1 = false;
 	
-    private final int windowWidth = 1000;
+    private final int windowWidth = 1200;
     private final int windowHeight = 900;
-    private Text emptyInputsText = new Text ("Fill in user name and marker.");	
+    private Text emptyInputsText = new Text ("Fill in user name and marker. Computer cannot be username.");	
     private Text timeStringErrorText = new Text ("Time out must be an integer");
     private Text duplicateInputsText = new Text ("Two players cannot use the same username or marker.");
     private Text duplicateInputsText1 = new Text("User name is in the list already.");
@@ -101,6 +98,7 @@ public class MainView {
 		isImageMarker1 = false;
 		isImageMarker2 = false;
 		isAIMove = false;
+		username1 = username2 = marker1 = marker2 ="";
 	}
 	
 	
@@ -671,9 +669,17 @@ if (numPlayer == 2) {
 				gridPaneForInfo.getChildren().remove(duplicateInputsText1);
 			}
 			
+			
 			emptyErrors = false;
 			duplicateErrors = false;
 			duplicateErrors1 = false;
+			
+			if (lvUsername.getSelectionModel().selectedItemProperty().getValue() == null && chooseUsernameButton.isSelected()) {
+				emptyErrors = true;
+			}
+			if (numPlayer == 2 && lvUsername2.getSelectionModel().selectedItemProperty().getValue() == null && chooseUsernameButton2.isSelected()) {
+				emptyErrors = true;
+			}
 			
 			if (!chooseImageButton.isSelected()) {
 				isImageMarker1 = false;
@@ -750,7 +756,7 @@ if (numPlayer == 2) {
 //			System.out.println(emptyErrors + " " + duplicateErrors + "  " + duplicateErrors1);
 			
 			timeout =Integer.parseInt(fieldTimeOut.getText());
-			System.out.println(username1);
+			//System.out.println(username1);
 			if (!duplicateErrors && !emptyErrors && !duplicateErrors1) {
 				// one player, she/he goes first
 				if (numPlayer == 1) {
