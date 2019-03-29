@@ -58,7 +58,7 @@ public class MainView {
 	private boolean duplicateErrors = false;
 	private boolean duplicateErrors1 = false;
 	
-    private final int windowWidth = 1200;
+    private final int windowWidth = 1200; 
     private final int windowHeight = 900;
     private Text emptyInputsText = new Text ("Fill in user name and marker. Computer cannot be username.");	
     private Text timeStringErrorText = new Text ("Time out must be an integer");
@@ -176,7 +176,7 @@ public class MainView {
 		gridPaneForInfo.setVgap(20);
 		gridPaneForInfo.setAlignment(Pos.CENTER);
 		
-		Label timeoutLabel = new Label("Time limit: ");
+		Label timeoutLabel = new Label("Time limit (in second): ");
 		gridPaneForInfo.add(timeoutLabel, 0, 0);
 		
 		// add a textField for timeoutLabel
@@ -436,6 +436,10 @@ if (numPlayer == 2) {
 						root.getChildren().remove(lvUsername2);
 					}
 					
+					if (chooseUsernameButton2.isSelected()) {
+						root.setLeft(lvUsername2);
+					}
+					
 				} // end of enterUsernameButton is selected
 			}); // end of enterUsernameButton
 
@@ -455,8 +459,8 @@ if (numPlayer == 2) {
 						gridPaneForInfo.getChildren().remove(fieldUsername1);
 					}
 				
-				} // end of enterUsernameButton is selected
-			}); // end of enterUsernameButton
+				} // end of chooseUsernameButton is selected
+			}); // end of chooseUsernameButton
 
 			
 			
@@ -478,9 +482,12 @@ if (numPlayer == 2) {
 						root.getChildren().remove(lvUsername2);
 					}
 					
+					if (chooseUsernameButton.isSelected()) {
+						root.setLeft(lvUsername);
+					}
 					
-				} // end of enterUsernameButton is selected
-			}); // end of enterUsernameButton
+				} // end of enterUsernameButton2 is selected
+			}); // end of enterUsernameButton2
 
 
 			
@@ -939,6 +946,11 @@ if (numPlayer == 2) {
 						// update win/lose
 						ticTacToe.player.get(0).setLose();
 						ticTacToe.getHashMap().put(username.get(0), ticTacToe.player.get(0));
+						
+						
+						if (vBoxForGame.getChildren().contains(quitBtn)) {
+							vBoxForGame.getChildren().remove(quitBtn);
+						}
 						
 						// show the two buttons (play again and quit)
 						Square.hBox.setAlignment(Pos.CENTER);

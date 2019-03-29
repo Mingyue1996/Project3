@@ -220,13 +220,13 @@ public class Square extends BorderPane{
 							
 								if (MainView.timerSquare != null) {
 									MainView.timerSquare.stop();
-									System.out.println(MainView.timerSquare +" stops after computer plays");
+									//System.out.println(MainView.timerSquare +" stops after computer plays");
 								}
 								
 
 								MainView.timerSquare = new Timeline(new KeyFrame(Duration.millis(MainView.getTimeout()*1000), e-> {
 								timerLists.add(MainView.timerSquare);
-								System.out.println(MainView.timerSquare +" starts");
+								//System.out.println(MainView.timerSquare +" starts");
 									// when the timer is called, the previous player does not make a move, so we need to change the player ID here
 									currentPlayerID = MainView.ticTacToe.setCurrentPlayer(currentPlayerID);
 									// show whose turn now
@@ -245,8 +245,14 @@ public class Square extends BorderPane{
 												MainView.timerSquare.stop();
 	
 											}
-											// show the human lost the game
-											MainView.turnLabel.setText(MainView.ticTacToe.player.get(MainView.getHumanPlyaerID()-1).getUsername() + " lost the game.");
+//											if (MainView.ticTacToe.getGameState() == 2) {
+//												// show the human lost the game
+//												MainView.turnLabel.setText(MainView.ticTacToe.player.get(MainView.getHumanPlyaerID()-1).getUsername() + " lost the game.");
+//											}
+//											else if (MainView.ticTacToe.getGameState() == 3) {
+//												MainView.turnLabel.setText("There is a tie.");
+//											}
+											
 											// show the two buttons (play again and quit)
 											Square.hBox.setAlignment(Pos.CENTER);
 											if (!MainView.vBoxForGame.getChildren().contains(hBox)) {
@@ -306,7 +312,7 @@ public class Square extends BorderPane{
 
 			if (MainView.getTimeout() > 0) {
 				if (MainView.timerSquare != null) {
-					System.out.println(MainView.timerSquare + "stops");					
+					//System.out.println(MainView.timerSquare + "stops");					
 					MainView.timerSquare.stop();
 
 					//clearTimer();
@@ -386,13 +392,6 @@ public class Square extends BorderPane{
 		
 	} // end of checkGameIsOver
 	
-	private void clearTimer () {
-			for (int i = 0; i < timerLists.size(); i++) {
-				timerLists.get(i).stop();
-			}
-			timerLists.clear();
-		
-	}
 	
 	public static void playSound(final String FILE_PATH) {
 		Media media_win = new Media (Paths.get(FILE_PATH).toUri().toString()); //https://vocaroo.com/i/s1Ho8LVVYJRD
