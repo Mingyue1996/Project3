@@ -67,6 +67,11 @@ public class Square extends BorderPane{
 			if (MainView.getIsAIMove()) {
 				//System.out.println("computer marker: " + marker);
 				this.setCenter(new Text(marker));
+				if (marker.equals("cn.png") || marker.equals("us.png") || marker.equals("gb.png")) {
+					System.out.println(" my marker");
+					
+					this.setCenter(new ImageView(Paths.get("src/" + marker).toUri().toString()));
+				}
 			}
 			// display a text when a human with text marker moves
 			else if (!MainView.getIsAIMove()) {
@@ -75,6 +80,11 @@ public class Square extends BorderPane{
 				// check if the human has a text marker
 				if (currentPlayerID == 1 && !MainView.getIsImageMarker1()) {
 					this.setCenter(new Text(marker));
+					if (marker.equals("cn.png") || marker.equals("us.png") || marker.equals("gb.png")) {
+						System.out.println(" my marker");
+						
+						this.setCenter(new ImageView(Paths.get("src/" + marker).toUri().toString()));
+					}
 				}
 				else if (currentPlayerID == 2 && !MainView.getIsImageMarker2()) {
 					this.setCenter(new Text(marker));

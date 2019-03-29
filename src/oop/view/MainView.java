@@ -63,7 +63,7 @@ public class MainView {
 	
     private final int windowWidth = 1000;
     private final int windowHeight = 900;
-    private Text emptyInputsText = new Text ("User name(s) and marker(s) cannot be empty.");	
+    private Text emptyInputsText = new Text ("Fill in user name and marker.");	
     private Text timeStringErrorText = new Text ("Time out must be an integer");
     private Text duplicateInputsText = new Text ("Two players cannot use the same username or marker.");
     private Text duplicateInputsText1 = new Text("User name is in the list already.");
@@ -221,14 +221,7 @@ public class MainView {
 			
 			Label humanPlayerMarkerLabel = new Label ("Put your marker: ");
 			gridPaneForInfo.add(humanPlayerMarkerLabel, 0, 2);
-			
-			
-			
-			
-			
-			
-			
-			
+	
 		} 
 		// when we have two players
 		else {
@@ -327,6 +320,7 @@ public class MainView {
 	                        	marker2 = new_val.substring(new_val.indexOf("(") + 1, new_val.indexOf(")"));
 			});
 
+			
 		
 		
 		// add a textField for player1 marker
@@ -438,6 +432,12 @@ if (numPlayer == 2) {
 					if (root.getChildren().contains(lvUsername)) {
 						root.getChildren().remove(lvUsername);
 					}
+					
+					// remove list view
+					if (root.getChildren().contains(lvUsername2)) {
+						root.getChildren().remove(lvUsername2);
+					}
+					
 				} // end of enterUsernameButton is selected
 			}); // end of enterUsernameButton
 
@@ -474,6 +474,13 @@ if (numPlayer == 2) {
 					if (root.getChildren().contains(lvUsername)) {
 						root.getChildren().remove(lvUsername);
 					}
+					
+					// remove list view
+					if (root.getChildren().contains(lvUsername2)) {
+						root.getChildren().remove(lvUsername2);
+					}
+					
+					
 				} // end of enterUsernameButton is selected
 			}); // end of enterUsernameButton
 
@@ -487,6 +494,8 @@ if (numPlayer == 2) {
 					if (!root.getChildren().contains(lvUsername2)) {
 						root.setLeft(lvUsername2);
 					}
+					
+					
 					
 					// remove input field
 					if (gridPaneForInfo.getChildren().contains(fieldUsername2)) {
@@ -609,12 +618,14 @@ if (numPlayer == 2) {
 			if (!chooseUsernameButton2.isSelected()) {
 				username2 = fieldUsername2.getText();
 				marker2 = fieldMarker2.getText();
+				
 			}
 			
 			
 			
+			
 			// if an image is selected for player1
-			if (chooseImageButton.isSelected()) {
+			if (chooseImageButton.isSelected() && !chooseUsernameButton.isSelected() ) {
 				isImageMarker1 = true;
 				// check which image is selected and store its directory
 				if (rbUS.isSelected()) {
@@ -627,9 +638,11 @@ if (numPlayer == 2) {
 					marker1 = "gb.png";
 				}
 			} // end of if an image is selected
+			else if (!chooseUsernameButton.isSelected() && !chooseImageButton.isSelected() ){
+				marker1 = fieldMarker1.getText();
+			}
 			
-			
-			if (numPlayer == 2 && chooseImageButton2.isSelected()) {
+			if (numPlayer == 2 && chooseImageButton2.isSelected() && !chooseUsernameButton2.isSelected()) {
 				isImageMarker2 = true;
 				// check which image is selected and store its directory
 				if (rbUS2.isSelected()) {
@@ -642,6 +655,9 @@ if (numPlayer == 2) {
 					marker2 = "gb.png";
 				}
 			} // end of numPlayer == 2
+			else if (numPlayer == 2 && !chooseUsernameButton2.isSelected() && !chooseImageButton2.isSelected()) {
+				marker2 = fieldMarker2.getText();
+			}
 			
 			
 			if (gridPaneForInfo.getChildren().contains(emptyInputsText)) {
@@ -654,6 +670,7 @@ if (numPlayer == 2) {
 			if (gridPaneForInfo.getChildren().contains(duplicateInputsText1)) {
 				gridPaneForInfo.getChildren().remove(duplicateInputsText1);
 			}
+			
 			emptyErrors = false;
 			duplicateErrors = false;
 			duplicateErrors1 = false;
@@ -784,6 +801,7 @@ if (numPlayer == 2) {
 						
 						// if we choose a user name, use the original player object				
 						if (chooseUsernameButton.isSelected()) {
+							// update the marker
 							ticTacToe.player.add(0,ticTacToe.getHashMap().get(username1));
 						}
 						else {
@@ -804,9 +822,28 @@ if (numPlayer == 2) {
 				} // end of one player
 				// two players
 				else {
+					
 					ticTacToe.setIsHumanPlayer(true);
-					ticTacToe.createPlayer(username.get(0), marker.get(0), 1);
-					ticTacToe.createPlayer(username.get(1), marker.get(1), 2);
+					
+					// if we choose a user name, use the original player object				
+					if (chooseUsernameButton.isSelected()) {
+						// update the marker
+						ticTacToe.player.add(0,ticTacToe.getHashMap().get(username1));
+					}
+					else {
+						ticTacToe.createPlayer(username.get(0), marker.get(0), 1);
+					}
+					
+					// if we choose a user name2, use the original player object				
+					if (chooseUsernameButton2.isSelected()) {
+						// update the marker
+						ticTacToe.player.add(1,ticTacToe.getHashMap().get(username2));
+					}
+					else {
+						// update the marker
+						ticTacToe.createPlayer(username.get(1), marker.get(1), 2);
+					}
+					
 				}
 				
 				// clear all the elements in pane
@@ -999,13 +1036,14 @@ if (numPlayer == 2) {
 	public void displayInfo() {
 		 Set set = ticTacToe.getHashMap().entrySet();
 	      Iterator iterator = set.iterator();
-
+	      userInfoArrayList.clear();
 	      while(iterator.hasNext()) {
 	         Map.Entry mentry = (Map.Entry)iterator.next();
 //	         System.out.print("key: "+ mentry.getKey() + " & Value: ");
 //	         System.out.println(mentry.getValue());
 	         
 	         // store info into the array list
+	         
 	         userInfoArrayList.add(((Player) mentry.getValue()).getUsername()  + " (" + ((Player) mentry.getValue()).getMarker() + ") Win-Lose: " 
 	         + ((Player) mentry.getValue()).getWin() + "-"+ ((Player) mentry.getValue()).getLose());
 	      }

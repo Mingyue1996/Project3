@@ -52,5 +52,10 @@ public class Player implements Serializable {
 		loseNum ++;
 	}
 
+//	public void setMarker(String marker) {
+//		this.marker = marker;
+//		
+//	}
+
 
 }
